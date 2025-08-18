@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My App Vault | Web App Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4ade80;
+            --danger: #f43f5e;
+            --warning: #f59e0b;
+            --gray: #6c757d;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+
+        .search-filter {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.8rem 1.2rem 0.8rem 3rem;
+            border-radius: 50px;
+            border: 2px solid #e2e8f0;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.3);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            font-size: 1.2rem;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            background: var(--card-bg);
+            border: 2px solid #e2e8f0;
+            color: var(--gray);
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .app-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .app-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .app-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .app-card:hover .app-image img {
+            transform: scale(1.05);
+        }
+
+        .app-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .app-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .app-content p {
+            color: var(--gray);
+            margin-bottom: 1.2rem;
+            flex-grow: 1;
+        }
+
+        .app-stats {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+            font-size: 0.9rem;
+        }
+
+        .app-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: var(--gray);
+        }
+
+        .app-stat i {
+            color: var(--primary);
+        }
+
+        .app-links {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .app-link {
+            flex: 1;
+            text-align: center;
+            padding: 0.7rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .app-link.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .app-link.primary:hover {
+            background: var(--secondary);
+        }
+
+        .app-link.secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .app-link.secondary:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            opacity: 0.3;
+        }
+
+        .empty-state h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .empty-state p {
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            color: var(--gray);
+            padding: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .search-filter {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .search-box {
+                max-width: 100%;
+            }
+            
+            header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .apps-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-links {
+                flex-direction: column;
+            }
+            
+            header {
+                padding: 1.5rem 0;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-folder-tree"></i> My App Vault</h1>
+            <p>Showcasing all my web applications in one centralized hub</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="search-filter">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search for an application...">
+            </div>
+            
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All Apps</button>
+                <button class="filter-btn" data-filter="javascript">JavaScript</button>
+                <button class="filter-btn" data-filter="react">React</button>
+                <button class="filter-btn" data-filter="vue">Vue</button>
+                <button class="filter-btn" data-filter="angular">Angular</button>
+                <button class="filter-btn" data-filter="node">Node.js</button>
+            </div>
+        </div>
+
+        <div class="apps-grid" id="appsContainer">
+            <!-- App cards will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>Created with <i class="fas fa-heart" style="color: var(--danger);"></i> by Your Name | <a href="#" target="_blank">GitHub</a> | <a href="#" target="_blank">Portfolio</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Sample app data - replace with your actual projects
+        const appsData = [
+            {
+                id: 1,
+                title: "Finance Dashboard",
+                description: "A comprehensive financial analytics dashboard with real-time data visualization.",
+                category: ["react", "javascript"],
+                image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                date: "2023-10-15",
+                views: 2450,
+                likes: 189,
+                demoUrl: "#",
+                codeUrl: "#",
+                featured: true
+            },
+            {
+                id: 2,
+                title: "E-Commerce Platform",
+                description: "Full-featured online shopping platform with payment processing and inventory management.",
+                category: ["vue", "node"],
+                image: "https://images.unsplash.com/photo-1607082350899-7e105aa886ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                date: "2023-08-22",
+                views: 3120,
+                likes: 245,
+                demoUrl: "#",
+                codeUrl: "#"
+            },
+            {
+                id: 3,
+                title: "Health Tracker",
+                description: "Mobile-first application for tracking fitness goals, nutrition, and health metrics.",
+                category: ["react", "javascript"],
+                image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                date: "2023-09-05",
+                views: 1870,
+                likes: 156,
+                demoUrl: "#",
+                codeUrl: "#",
+                featured: true
+            },
+            {
+                id: 4,
+                title: "Task Management System",
+                description: "Collaborative task management with drag-and-drop interface and team features.",
+                category: ["angular"],
+                image: "https://images.unsplash.com/photo-1543286386-713bdd548da4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                date: "2023-07-18",
+                views: 2890,
+                likes: 210,
+                demoUrl: "#",
+                codeUrl: "#"
+            },
+            {
+                id: 5,
+                title: "Social Media Analytics",
+                description: "Track and analyze social media performance across multiple platforms in one dashboard.",
+                category: ["react", "node"],
+                image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                date: "2023-11-02",
+                views: 1560,
+                likes: 132,
+                demoUrl: "#",
+                codeUrl: "#",
+                featured: true
+            },
+            {
+                id: 6,
+                title: "Weather Forecast App",
+                description: "Real-time weather forecasts with interactive maps and severe weather alerts.",
+                category: ["javascript"],
+                image: "https://images.unsplash.com/photo-1492011221367-f47e3ccd77a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                date: "2023-06-12",
+                views: 3240,
+                likes: 278,
+                demoUrl: "#",
+                codeUrl: "#"
+            }
+        ];
+
+        // DOM Elements
+        const appsContainer = document.getElementById('appsContainer');
+        const searchInput = document.getElementById('searchInput');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+
+        // Initialize the app
+        function initApp() {
+            renderApps(appsData);
+            setupEventListeners();
+        }
+
+        // Render apps to the DOM
+        function renderApps(apps) {
+            appsContainer.innerHTML = '';
+            
+            if (apps.length === 0) {
+                appsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <h2>No Apps Found</h2>
+                        <p>Try adjusting your search or filter to find what you're looking for.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            apps.forEach(app => {
+                const appCard = document.createElement('div');
+                appCard.className = 'app-card';
+                
+                appCard.innerHTML = `
+                    <div class="app-image">
+                        <img src="${app.image}" alt="${app.title}">
+                        ${app.featured ? '<span class="app-badge">Featured</span>' : ''}
+                    </div>
+                    <div class="app-content">
+                        <h3>${app.title}</h3>
+                        <p>${app.description}</p>
+                        <div class="app-stats">
+                            <div class="app-stat">
+                                <i class="fas fa-calendar"></i> ${formatDate(app.date)}
+                            </div>
+                            <div class="app-stat">
+                                <i class="fas fa-eye"></i> ${app.views.toLocaleString()}
+                            </div>
+                            <div class="app-stat">
+                                <i class="fas fa-heart"></i> ${app.likes.toLocaleString()}
+                            </div>
+                        </div>
+                        <div class="app-links">
+                            <a href="${app.demoUrl}" target="_blank" class="app-link primary">
+                                <i class="fas fa-external-link-alt"></i> Live Demo
+                            </a>
+                            <a href="${app.codeUrl}" target="_blank" class="app-link secondary">
+                                <i class="fab fa-github"></i> Source Code
+                            </a>
+                        </div>
+                    </div>
+                `;
+                
+                appsContainer.appendChild(appCard);
+            });
+        }
+
+        // Format date to readable format
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Filter apps based on search and category
+        function filterApps() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+            
+            const filteredApps = appsData.filter(app => {
+                const matchesSearch = app.title.toLowerCase().includes(searchTerm) || 
+                                      app.description.toLowerCase().includes(searchTerm);
+                
+                const matchesCategory = activeFilter === 'all' || app.category.includes(activeFilter);
+                
+                return matchesSearch && matchesCategory;
+            });
+            
+            renderApps(filteredApps);
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Search input
+            searchInput.addEventListener('input', filterApps);
+            
+            // Filter buttons
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    filterApps();
+                });
+            });
+        }
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
