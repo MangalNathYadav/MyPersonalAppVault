@@ -1,0 +1,32 @@
+
+
+/* Iteration 0 */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal App Vault</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Personal App Vault</h1>
+        <div id="app-list">
+            <!-- App entries will be dynamically added here -->
+        </div>
+        <button id="add-app-button">Add Application</button>
+
+        <div id="app-form" style="display:none;">
+            <h2>Add New Application</h2>
+            <label for="app-name">Application Name:</label>
+            <input type="text" id="app-name" name="app-name"><br><br>
+            <label for="app-url">Application URL:</label>
+            <input type="url" id="app-url" name="app-url"><br><br>
+            <button id="save-app-button">Save Application</button>
+            <button id="cancel-app-button">Cancel</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

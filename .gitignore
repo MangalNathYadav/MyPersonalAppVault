@@ -1,0 +1,8 @@
+mytypingbot.py
+*.secrets
+workflow.py
+buffer_queue.json
+project_state.json
+auto_focus.py
+agent_state.json
+ai_responses.log
