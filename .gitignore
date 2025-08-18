@@ -6,3 +6,4 @@ project_state.json
 auto_focus.py
 agent_state.json
 ai_responses.log
+.agent_state
