@@ -9,7 +9,7 @@
     
     <style>
         /* ============================================
-           ULTRA MODERN 3D CSS
+           ULTRA MODERN 3D CSS - ENHANCED
            ============================================ */
         
         :root {
@@ -71,7 +71,7 @@
             transition: background 0.3s ease;
         }
 
-        /* Preloader */
+        /* Preloader - Enhanced */
         .preloader {
             position: fixed;
             top: 0;
@@ -92,34 +92,42 @@
         }
 
         .cube-loader {
-            width: 60px;
-            height: 60px;
+            width: 80px;
+            height: 80px;
             position: relative;
             transform-style: preserve-3d;
-            animation: rotate-cube 2s infinite linear;
+            animation: rotate-cube 2s infinite ease-in-out;
         }
 
         @keyframes rotate-cube {
-            0% { transform: rotateX(0) rotateY(0); }
-            100% { transform: rotateX(360deg) rotateY(360deg); }
+            0% { transform: rotateX(0) rotateY(0) rotateZ(0); }
+            33% { transform: rotateX(30deg) rotateY(-30deg) rotateZ(90deg); }
+            66% { transform: rotateX(90deg) rotateY(180deg) rotateZ(180deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
         }
 
         .cube-face {
             position: absolute;
-            width: 60px;
-            height: 60px;
-            border: 2px solid var(--primary);
+            width: 80px;
+            height: 80px;
+            border: 3px solid var(--primary);
             background: rgba(99, 102, 241, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary);
+            opacity: 0.8;
         }
 
-        .cube-face:nth-child(1) { transform: translateZ(30px); }
-        .cube-face:nth-child(2) { transform: rotateY(90deg) translateZ(30px); }
-        .cube-face:nth-child(3) { transform: rotateY(180deg) translateZ(30px); }
-        .cube-face:nth-child(4) { transform: rotateY(-90deg) translateZ(30px); }
-        .cube-face:nth-child(5) { transform: rotateX(90deg) translateZ(30px); }
-        .cube-face:nth-child(6) { transform: rotateX(-90deg) translateZ(30px); }
+        .cube-face:nth-child(1) { transform: translateZ(40px); }
+        .cube-face:nth-child(2) { transform: rotateY(90deg) translateZ(40px); }
+        .cube-face:nth-child(3) { transform: rotateY(180deg) translateZ(40px); }
+        .cube-face:nth-child(4) { transform: rotateY(-90deg) translateZ(40px); }
+        .cube-face:nth-child(5) { transform: rotateX(90deg) translateZ(40px); }
+        .cube-face:nth-child(6) { transform: rotateX(-90deg) translateZ(40px); }
 
-        /* Background */
+        /* Background - Enhanced */
         .bg-animation {
             position: fixed;
             width: 100%;
@@ -139,7 +147,7 @@
             height: 600px;
             border-radius: 50%;
             filter: blur(100px);
-            opacity: 0.1;
+            opacity: 0.15;
             animation: float-orb 20s infinite ease-in-out;
         }
 
@@ -157,12 +165,48 @@
         }
 
         @keyframes float-orb {
-            0%, 100% { transform: translate(0, 0); }
-            33% { transform: translate(30px, -30px); }
-            66% { transform: translate(-20px, 20px); }
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
         }
 
-        /* Navigation */
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float-particle 15s infinite linear;
+        }
+
+        @keyframes float-particle {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Navigation - Enhanced */
         .navbar {
             position: fixed;
             top: 0;
@@ -173,6 +217,11 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             z-index: 1000;
             transition: var(--transition);
+            transform: translateY(0);
+        }
+
+        .navbar.hidden {
+            transform: translateY(-100%);
         }
 
         .nav-container {
@@ -189,6 +238,24 @@
             gap: 0.5rem;
             font-size: 1.5rem;
             font-weight: 700;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient-rainbow);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+
+        .logo:hover::after {
+            transform: translateX(0);
         }
 
         .logo i {
@@ -198,8 +265,9 @@
         }
 
         @keyframes rotate-logo {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
         }
 
         .theme-toggle {
@@ -214,14 +282,33 @@
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255, 255, 255, 0.2), transparent);
+            transform: translateY(-100%);
             transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover::before {
+            transform: translateY(0);
         }
 
         .theme-toggle:hover {
             transform: scale(1.1) rotate(180deg);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
         }
 
-        /* Hero Section */
+        /* Hero Section - Enhanced */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -229,12 +316,15 @@
             justify-content: center;
             padding: 100px 2rem 2rem;
             position: relative;
+            overflow: hidden;
         }
 
         .hero-content {
             text-align: center;
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
+            z-index: 2;
         }
 
         .hero-title {
@@ -247,7 +337,26 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             background-size: 200% auto;
-            animation: gradient-shift 3s ease infinite;
+            animation: gradient-shift 3s ease infinite, text-glitch 5s infinite;
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-rainbow);
+            transform: scaleX(0);
+            transform-origin: left;
+            animation: expand-line 2s 1s forwards;
+        }
+
+        @keyframes expand-line {
+            to { transform: scaleX(1); }
         }
 
         @keyframes gradient-shift {
@@ -256,11 +365,25 @@
             100% { background-position: 0% 50%; }
         }
 
+        @keyframes text-glitch {
+            0%, 100% { transform: translateX(0); }
+            95% { transform: translateX(0); }
+            96% { transform: translateX(-2px); }
+            97% { transform: translateX(2px); }
+            98% { transform: translateX(-2px); }
+            99% { transform: translateX(2px); }
+        }
+
         .hero-subtitle {
             font-size: 1.5rem;
             color: var(--text-secondary);
             margin-bottom: 3rem;
-            animation: fade-up 1s ease;
+            animation: fade-up 1s ease, subtitle-pulse 3s infinite;
+        }
+
+        @keyframes subtitle-pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
         }
 
         @keyframes fade-up {
@@ -274,7 +397,7 @@
             }
         }
 
-        /* Cards 3D */
+        /* Cards 3D - Enhanced */
         .floating-cards {
             display: flex;
             gap: 2rem;
@@ -289,9 +412,23 @@
             background: var(--gradient-1);
             border-radius: 20px;
             transform-style: preserve-3d;
-            transition: transform 0.6s;
+            transition: transform 0.6s, box-shadow 0.6s;
             animation: float-card 3s ease-in-out infinite;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-3d::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.2));
+            opacity: 0;
+            transition: opacity 0.6s;
         }
 
         .card-3d:nth-child(2) {
@@ -305,19 +442,38 @@
         }
 
         @keyframes float-card {
-            0%, 100% { transform: translateY(0) rotateX(0) rotateY(0); }
-            50% { transform: translateY(-20px) rotateX(5deg) rotateY(5deg); }
+            0%, 100% { transform: translateY(0) rotateX(0) rotateY(0) scale(1); }
+            33% { transform: translateY(-20px) rotateX(5deg) rotateY(5deg) scale(1.05); }
+            66% { transform: translateY(10px) rotateX(-3deg) rotateY(-3deg) scale(1.03); }
         }
 
         .card-3d:hover {
-            transform: rotateY(180deg);
+            transform: rotateY(180deg) scale(1.05);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
         }
 
-        /* Input Section */
+        .card-3d:hover::before {
+            opacity: 1;
+        }
+
+        /* Input Section - Enhanced */
         .input-section {
             padding: 4rem 2rem;
             max-width: 800px;
             margin: 0 auto;
+            position: relative;
+        }
+
+        .input-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--gradient-rainbow);
+            border-radius: 0 0 10px 10px;
         }
 
         .glass-panel {
@@ -327,12 +483,52 @@
             border-radius: 24px;
             padding: 3rem;
             box-shadow: var(--shadow-3d);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
+
+        .glass-panel:hover {
+            transform: translateY(-5px);
         }
 
         .section-title {
             font-size: 2rem;
             margin-bottom: 2rem;
             text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-1);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .glass-panel:hover .section-title::after {
+            transform: scaleX(1);
         }
 
         .input-group {
@@ -350,6 +546,7 @@
             color: var(--text-primary);
             font-size: 1rem;
             transition: var(--transition);
+            position: relative;
         }
 
         .input-3d:focus {
@@ -370,24 +567,23 @@
             transition: var(--transition);
             position: relative;
             overflow: hidden;
+            transform: translateZ(0);
         }
 
         .btn-3d::before {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255, 255, 255, 0.2), transparent);
+            transform: translateY(100%);
+            transition: transform 0.6s ease;
         }
 
         .btn-3d:hover::before {
-            width: 300px;
-            height: 300px;
+            transform: translateY(0);
         }
 
         .btn-3d:hover {
@@ -395,7 +591,7 @@
             box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4);
         }
 
-        /* Controls */
+        /* Controls - Enhanced */
         .controls {
             padding: 2rem;
             max-width: 1400px;
@@ -405,6 +601,14 @@
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .controls.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .search-box {
@@ -435,6 +639,11 @@
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-tertiary);
+            transition: color 0.3s ease;
+        }
+
+        .search-input:focus + .search-icon {
+            color: var(--primary);
         }
 
         .filter-pills {
@@ -451,6 +660,24 @@
             color: var(--text-secondary);
             cursor: pointer;
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255, 255, 255, 0.1), transparent);
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .pill:hover::before {
+            transform: translateY(0);
         }
 
         .pill:hover {
@@ -465,7 +692,7 @@
             border-color: transparent;
         }
 
-        /* Projects Grid */
+        /* Projects Grid - Enhanced */
         .projects-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -484,6 +711,13 @@
             transform-style: preserve-3d;
             position: relative;
             cursor: pointer;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .project-card.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .project-card:hover {
@@ -496,6 +730,23 @@
             background: var(--gradient-1);
             position: relative;
             overflow: hidden;
+        }
+
+        .project-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.7));
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .project-card:hover .project-image::before {
+            opacity: 1;
         }
 
         .project-image img {
@@ -520,16 +771,45 @@
             color: white;
             font-size: 0.75rem;
             font-weight: 600;
+            z-index: 2;
+            transform: translateY(-10px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .project-card:hover .project-badge {
+            transform: translateY(0);
+            opacity: 1;
         }
 
         .project-content {
             padding: 1.5rem;
+            position: relative;
         }
 
         .project-title {
             font-size: 1.25rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .project-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient-1);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .project-card:hover .project-title::after {
+            transform: scaleX(1);
         }
 
         .project-description {
@@ -554,6 +834,11 @@
             display: flex;
             align-items: center;
             gap: 0.25rem;
+            transition: color 0.3s ease;
+        }
+
+        .stat-item:hover {
+            color: var(--primary);
         }
 
         .stat-item i {
@@ -575,6 +860,24 @@
             color: var(--text-primary);
             text-decoration: none;
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255, 255, 255, 0.1), transparent);
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .project-link:hover::before {
+            transform: translateY(0);
         }
 
         .project-link:hover {
@@ -583,10 +886,11 @@
             transform: translateY(-2px);
         }
 
-        /* Loading State */
+        /* Loading State - Enhanced */
         .loading-container {
             text-align: center;
             padding: 4rem;
+            grid-column: 1/-1;
         }
 
         .spinner {
@@ -596,14 +900,28 @@
             border: 3px solid var(--surface);
             border-top-color: var(--primary);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite, pulse 2s ease-in-out infinite;
+            position: relative;
+        }
+
+        .spinner::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 3px solid transparent;
+            border-top-color: var(--secondary);
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite reverse;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        /* Stats */
+        /* Stats - Enhanced */
         .stats-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -611,6 +929,14 @@
             padding: 2rem;
             max-width: 1000px;
             margin: 2rem auto;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .stats-container.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .stat-card {
@@ -620,6 +946,24 @@
             padding: 1.5rem;
             text-align: center;
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255, 255, 255, 0.05), transparent);
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover::before {
+            transform: translateY(0);
         }
 
         .stat-card:hover {
@@ -631,6 +975,24 @@
             font-size: 2rem;
             font-weight: 700;
             color: var(--primary);
+            position: relative;
+            display: inline-block;
+        }
+
+        .stat-number::after {
+            content: '+';
+            position: absolute;
+            right: -15px;
+            top: 0;
+            font-size: 1.5rem;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .stat-card:hover .stat-number::after {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .stat-label {
@@ -638,7 +1000,7 @@
             color: var(--text-tertiary);
         }
 
-        /* Floating Action Button */
+        /* Floating Action Button - Enhanced */
         .fab {
             position: fixed;
             bottom: 2rem;
@@ -654,13 +1016,21 @@
             box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
             transition: var(--transition);
             z-index: 100;
+            transform: scale(0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fab.visible {
+            transform: scale(1);
         }
 
         .fab:hover {
             transform: scale(1.1) rotate(90deg);
         }
 
-        /* Toast */
+        /* Toast - Enhanced */
         .toast {
             position: fixed;
             bottom: 2rem;
@@ -673,6 +1043,8 @@
             opacity: 0;
             transition: var(--transition);
             z-index: 1000;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .toast.show {
@@ -680,12 +1052,26 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* Footer */
+        /* Footer - Enhanced */
         .footer {
             padding: 4rem 2rem 2rem;
             text-align: center;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             margin-top: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--gradient-rainbow);
+            border-radius: 0 0 10px 10px;
         }
 
         .footer-text {
@@ -740,20 +1126,23 @@
     <!-- Preloader -->
     <div class="preloader" id="preloader">
         <div class="cube-loader">
-            <div class="cube-face"></div>
-            <div class="cube-face"></div>
-            <div class="cube-face"></div>
-            <div class="cube-face"></div>
-            <div class="cube-face"></div>
-            <div class="cube-face"></div>
+            <div class="cube-face"><i class="fab fa-github"></i></div>
+            <div class="cube-face"><i class="fas fa-code"></i></div>
+            <div class="cube-face"><i class="fas fa-cube"></i></div>
+            <div class="cube-face"><i class="fas fa-laptop-code"></i></div>
+            <div class="cube-face"><i class="fas fa-rocket"></i></div>
+            <div class="cube-face"><i class="fas fa-star"></i></div>
         </div>
     </div>
 
     <!-- Background Animation -->
     <div class="bg-animation"></div>
+    
+    <!-- Particles -->
+    <div class="particles" id="particles"></div>
 
     <!-- Navigation -->
-    <nav class="navbar">
+    <nav class="navbar" id="navbar">
         <div class="nav-container">
             <div class="logo">
                 <i class="fab fa-github"></i>
@@ -810,7 +1199,7 @@
     </section>
 
     <!-- Stats -->
-    <div class="stats-container" id="statsContainer" style="display: none;">
+    <div class="stats-container" id="statsContainer">
         <div class="stat-card">
             <div class="stat-number" id="totalRepos">0</div>
             <div class="stat-label">Repositories</div>
@@ -830,7 +1219,7 @@
     </div>
 
     <!-- Controls -->
-    <div class="controls" id="controlsSection" style="display: none;">
+    <div class="controls" id="controlsSection">
         <div class="search-box">
             <i class="fas fa-search search-icon"></i>
             <input 
@@ -885,7 +1274,7 @@
 
     <script>
         // ============================================
-        // ULTRA MODERN 3D PORTFOLIO APP
+        // ULTRA MODERN 3D PORTFOLIO APP - ENHANCED
         // ============================================
         
         class GitHubPortfolio3D {
@@ -893,12 +1282,14 @@
                 this.repos = [];
                 this.filteredRepos = [];
                 this.currentFilter = 'all';
+                this.lastScrollY = 0;
                 this.init();
             }
 
             init() {
                 this.setupElements();
                 this.setupEventListeners();
+                this.createParticles();
                 this.hidePreloader();
                 this.initializeTheme();
             }
@@ -921,7 +1312,9 @@
                     totalRepos: document.getElementById('totalRepos'),
                     totalStars: document.getElementById('totalStars'),
                     totalForks: document.getElementById('totalForks'),
-                    totalLanguages: document.getElementById('totalLanguages')
+                    totalLanguages: document.getElementById('totalLanguages'),
+                    navbar: document.getElementById('navbar'),
+                    particles: document.getElementById('particles')
                 };
             }
 
@@ -955,20 +1348,57 @@
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
 
-                // Show/hide scroll button
+                // Show/hide scroll button and navbar on scroll
                 window.addEventListener('scroll', () => {
                     if (window.scrollY > 300) {
-                        this.elements.scrollTop.style.transform = 'scale(1)';
+                        this.elements.scrollTop.classList.add('visible');
                     } else {
-                        this.elements.scrollTop.style.transform = 'scale(0)';
+                        this.elements.scrollTop.classList.remove('visible');
                     }
+                    
+                    // Hide navbar on scroll down, show on scroll up
+                    if (window.scrollY > this.lastScrollY && window.scrollY > 100) {
+                        this.elements.navbar.classList.add('hidden');
+                    } else {
+                        this.elements.navbar.classList.remove('hidden');
+                    }
+                    this.lastScrollY = window.scrollY;
                 });
+            }
+
+            createParticles() {
+                const particles = this.elements.particles;
+                const particleCount = 30;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    
+                    // Random properties
+                    const size = Math.random() * 5 + 2;
+                    const posX = Math.random() * 100;
+                    const delay = Math.random() * 15;
+                    const duration = Math.random() * 10 + 15;
+                    
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.left = `${posX}%`;
+                    particle.style.animationDelay = `${delay}s`;
+                    particle.style.animationDuration = `${duration}s`;
+                    
+                    // Random color from gradients
+                    const colors = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b'];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.background = color;
+                    
+                    particles.appendChild(particle);
+                }
             }
 
             hidePreloader() {
                 setTimeout(() => {
                     this.elements.preloader.classList.add('hidden');
-                }, 1500);
+                }, 2000);
             }
 
             initializeTheme() {
@@ -1126,6 +1556,15 @@
                         </div>
                     </div>
                 `).join('');
+                
+                // Animate project cards in
+                setTimeout(() => {
+                    document.querySelectorAll('.project-card').forEach((card, index) => {
+                        setTimeout(() => {
+                            card.classList.add('visible');
+                        }, index * 100);
+                    });
+                }, 50);
             }
 
             handleSearch(query) {
@@ -1204,7 +1643,7 @@
                 this.animateNumber(this.elements.totalForks, stats.forks);
                 this.animateNumber(this.elements.totalLanguages, stats.languages);
                 
-                this.elements.statsContainer.style.display = 'grid';
+                this.elements.statsContainer.classList.add('visible');
             }
 
             animateNumber(element, target) {
@@ -1225,7 +1664,7 @@
             }
 
             showControls() {
-                this.elements.controlsSection.style.display = 'flex';
+                this.elements.controlsSection.classList.add('visible');
             }
 
             showToast(message) {
