@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My App Vault | Web App Portfolio</title>
+    <title>My GitHub Portfolio | Web App Showcase</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* CSS: style.css */
         * {
             margin: 0;
             padding: 0;
@@ -61,6 +62,63 @@
             max-width: 700px;
             margin: 0 auto;
             opacity: 0.9;
+        }
+
+        .github-setup {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            box-shadow: var(--shadow);
+        }
+
+        .github-setup h2 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .github-setup p {
+            margin-bottom: 1.5rem;
+            color: var(--gray);
+        }
+
+        .setup-steps {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .setup-steps li {
+            margin-bottom: 0.5rem;
+        }
+
+        .github-input {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .github-input input {
+            flex: 1;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            font-size: 1rem;
+        }
+
+        .github-input button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .github-input button:hover {
+            background: var(--secondary);
         }
 
         .search-filter {
@@ -294,6 +352,26 @@
             text-decoration: underline;
         }
 
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         @media (max-width: 768px) {
             .search-filter {
                 flex-direction: column;
@@ -310,6 +388,10 @@
             
             .apps-grid {
                 grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+
+            .github-input {
+                flex-direction: column;
             }
         }
 
@@ -329,32 +411,55 @@
     </style>
 </head>
 <body>
+    <!-- HTML: index.html -->
     <header>
         <div class="container">
-            <h1><i class="fas fa-folder-tree"></i> My App Vault</h1>
-            <p>Showcasing all my web applications in one centralized hub</p>
+            <h1><i class="fas fa-folder-tree"></i> My GitHub Portfolio</h1>
+            <p>Showcasing my GitHub projects in one centralized hub</p>
         </div>
     </header>
 
     <div class="container">
+        <div class="github-setup">
+            <h2><i class="fab fa-github"></i> Load Your GitHub Projects</h2>
+            <p>Enter your GitHub username to fetch and display your repositories. Only public repositories will be shown.</p>
+            
+            <div class="github-input">
+                <input type="text" id="githubUsername" placeholder="Enter GitHub username" value="MangalNathYadav">
+                <button id="fetchRepos">Load Projects</button>
+            </div>
+            
+            <div class="setup-steps">
+                <p><strong>How it works:</strong></p>
+                <ol>
+                    <li>Enter your GitHub username above</li>
+                    <li>Click "Load Projects" to fetch your repositories</li>
+                    <li>Your projects will be displayed below with filters</li>
+                    <li>Use the search and filter options to find specific projects</li>
+                </ol>
+            </div>
+        </div>
+
         <div class="search-filter">
             <div class="search-box">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Search for an application...">
+                <input type="text" id="searchInput" placeholder="Search for a project...">
             </div>
             
             <div class="filter-buttons">
-                <button class="filter-btn active" data-filter="all">All Apps</button>
+                <button class="filter-btn active" data-filter="all">All Projects</button>
                 <button class="filter-btn" data-filter="javascript">JavaScript</button>
-                <button class="filter-btn" data-filter="react">React</button>
-                <button class="filter-btn" data-filter="vue">Vue</button>
-                <button class="filter-btn" data-filter="angular">Angular</button>
-                <button class="filter-btn" data-filter="node">Node.js</button>
+                <button class="filter-btn" data-filter="html">HTML</button>
+                <button class="filter-btn" data-filter="css">CSS</button>
+                <button class="filter-btn" data-filter="python">Python</button>
+                <button class="filter-btn" data-filter="java">Java</button>
             </div>
         </div>
 
         <div class="apps-grid" id="appsContainer">
-            <!-- App cards will be dynamically inserted here -->
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
         </div>
     </div>
 
@@ -365,94 +470,104 @@
     </footer>
 
     <script>
-        // Sample app data - replace with your actual projects
-        const appsData = [
-            {
-                id: 1,
-                title: "Finance Dashboard",
-                description: "A comprehensive financial analytics dashboard with real-time data visualization.",
-                category: ["react", "javascript"],
-                image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-                date: "2023-10-15",
-                views: 2450,
-                likes: 189,
-                demoUrl: "#",
-                codeUrl: "#",
-                featured: true
-            },
-            {
-                id: 2,
-                title: "E-Commerce Platform",
-                description: "Full-featured online shopping platform with payment processing and inventory management.",
-                category: ["vue", "node"],
-                image: "https://images.unsplash.com/photo-1607082350899-7e105aa886ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-                date: "2023-08-22",
-                views: 3120,
-                likes: 245,
-                demoUrl: "#",
-                codeUrl: "#"
-            },
-            {
-                id: 3,
-                title: "Health Tracker",
-                description: "Mobile-first application for tracking fitness goals, nutrition, and health metrics.",
-                category: ["react", "javascript"],
-                image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-                date: "2023-09-05",
-                views: 1870,
-                likes: 156,
-                demoUrl: "#",
-                codeUrl: "#",
-                featured: true
-            },
-            {
-                id: 4,
-                title: "Task Management System",
-                description: "Collaborative task management with drag-and-drop interface and team features.",
-                category: ["angular"],
-                image: "https://images.unsplash.com/photo-1543286386-713bdd548da4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-                date: "2023-07-18",
-                views: 2890,
-                likes: 210,
-                demoUrl: "#",
-                codeUrl: "#"
-            },
-            {
-                id: 5,
-                title: "Social Media Analytics",
-                description: "Track and analyze social media performance across multiple platforms in one dashboard.",
-                category: ["react", "node"],
-                image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-                date: "2023-11-02",
-                views: 1560,
-                likes: 132,
-                demoUrl: "#",
-                codeUrl: "#",
-                featured: true
-            },
-            {
-                id: 6,
-                title: "Weather Forecast App",
-                description: "Real-time weather forecasts with interactive maps and severe weather alerts.",
-                category: ["javascript"],
-                image: "https://images.unsplash.com/photo-1492011221367-f47e3ccd77a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-                date: "2023-06-12",
-                views: 3240,
-                likes: 278,
-                demoUrl: "#",
-                codeUrl: "#"
-            }
-        ];
-
+        // JavaScript: app.js
+        
         // DOM Elements
         const appsContainer = document.getElementById('appsContainer');
         const searchInput = document.getElementById('searchInput');
         const filterButtons = document.querySelectorAll('.filter-btn');
+        const githubUsernameInput = document.getElementById('githubUsername');
+        const fetchReposButton = document.getElementById('fetchRepos');
+
+        // Sample data as fallback
+        const fallbackData = [
+            {
+                id: 1,
+                name: "Finance Dashboard",
+                description: "A comprehensive financial analytics dashboard with real-time data visualization.",
+                language: "JavaScript",
+                image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                created_at: "2023-10-15",
+                stargazers_count: 15,
+                forks_count: 7,
+                html_url: "#",
+                homepage: "#"
+            },
+            {
+                id: 2,
+                name: "E-Commerce Platform",
+                description: "Full-featured online shopping platform with payment processing and inventory management.",
+                language: "Vue",
+                image: "https://images.unsplash.com/photo-1607082350899-7e105aa886ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                created_at: "2023-08-22",
+                stargazers_count: 23,
+                forks_count: 12,
+                html_url: "#",
+                homepage: "#"
+            },
+            {
+                id: 3,
+                name: "Health Tracker",
+                description: "Mobile-first application for tracking fitness goals, nutrition, and health metrics.",
+                language: "React",
+                image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                created_at: "2023-09-05",
+                stargazers_count: 18,
+                forks_count: 5,
+                html_url: "#",
+                homepage: "#"
+            }
+        ];
 
         // Initialize the app
         function initApp() {
-            renderApps(appsData);
+            // Try to fetch GitHub repos on load with the default username
+            fetchGitHubRepos('MangalNathYadav');
             setupEventListeners();
+        }
+
+        // Fetch GitHub repositories
+        async function fetchGitHubRepos(username) {
+            appsContainer.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            `;
+            
+            try {
+                // Try to fetch from GitHub API
+                const response = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`);
+                
+                if (!response.ok) {
+                    throw new Error('GitHub API request failed');
+                }
+                
+                const repos = await response.json();
+                
+                // Filter out forks and empty repos
+                const filteredRepos = repos.filter(repo => !repo.fork && repo.description);
+                
+                if (filteredRepos.length === 0) {
+                    throw new Error('No repositories found');
+                }
+                
+                renderApps(filteredRepos);
+            } catch (error) {
+                console.error('Error fetching GitHub repos:', error);
+                
+                // Show error message but use fallback data
+                appsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h2>Unable to Load GitHub Projects</h2>
+                        <p>We encountered an issue loading projects from GitHub. Showing sample projects instead.</p>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+                
+                // Use fallback data
+                renderApps(fallbackData);
+            }
         }
 
         // Render apps to the DOM
@@ -463,7 +578,7 @@
                 appsContainer.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-folder-open"></i>
-                        <h2>No Apps Found</h2>
+                        <h2>No Projects Found</h2>
                         <p>Try adjusting your search or filter to find what you're looking for.</p>
                     </div>
                 `;
@@ -474,30 +589,36 @@
                 const appCard = document.createElement('div');
                 appCard.className = 'app-card';
                 
+                // Use a default image if none is provided
+                const imageUrl = app.image || `https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80`;
+                
+                // Format the date
+                const date = formatDate(app.created_at);
+                
                 appCard.innerHTML = `
                     <div class="app-image">
-                        <img src="${app.image}" alt="${app.title}">
-                        ${app.featured ? '<span class="app-badge">Featured</span>' : ''}
+                        <img src="${imageUrl}" alt="${app.name}">
+                        ${app.language ? `<span class="app-badge">${app.language}</span>` : ''}
                     </div>
                     <div class="app-content">
-                        <h3>${app.title}</h3>
-                        <p>${app.description}</p>
+                        <h3>${app.name}</h3>
+                        <p>${app.description || 'No description available.'}</p>
                         <div class="app-stats">
                             <div class="app-stat">
-                                <i class="fas fa-calendar"></i> ${formatDate(app.date)}
+                                <i class="fas fa-calendar"></i> ${date}
                             </div>
                             <div class="app-stat">
-                                <i class="fas fa-eye"></i> ${app.views.toLocaleString()}
+                                <i class="fas fa-star"></i> ${app.stargazers_count || 0}
                             </div>
                             <div class="app-stat">
-                                <i class="fas fa-heart"></i> ${app.likes.toLocaleString()}
+                                <i class="fas fa-code-branch"></i> ${app.forks_count || 0}
                             </div>
                         </div>
                         <div class="app-links">
-                            <a href="${app.demoUrl}" target="_blank" class="app-link primary">
+                            <a href="${app.homepage || app.html_url}" target="_blank" class="app-link primary">
                                 <i class="fas fa-external-link-alt"></i> Live Demo
                             </a>
-                            <a href="${app.codeUrl}" target="_blank" class="app-link secondary">
+                            <a href="${app.html_url}" target="_blank" class="app-link secondary">
                                 <i class="fab fa-github"></i> Source Code
                             </a>
                         </div>
@@ -519,16 +640,35 @@
             const searchTerm = searchInput.value.toLowerCase();
             const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
             
-            const filteredApps = appsData.filter(app => {
-                const matchesSearch = app.title.toLowerCase().includes(searchTerm) || 
-                                      app.description.toLowerCase().includes(searchTerm);
+            // This is a simplified version - in a real app, you would filter the actual data
+            const appCards = document.querySelectorAll('.app-card');
+            
+            appCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const description = card.querySelector('p').textContent.toLowerCase();
+                const language = card.querySelector('.app-badge')?.textContent.toLowerCase() || '';
                 
-                const matchesCategory = activeFilter === 'all' || app.category.includes(activeFilter);
+                const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+                const matchesCategory = activeFilter === 'all' || language.includes(activeFilter);
                 
-                return matchesSearch && matchesCategory;
+                if (matchesSearch && matchesCategory) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
             });
             
-            renderApps(filteredApps);
+            // Check if all cards are hidden
+            const visibleCards = Array.from(appCards).filter(card => card.style.display !== 'none');
+            if (visibleCards.length === 0) {
+                appsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <h2>No Projects Found</h2>
+                        <p>Try adjusting your search or filter to find what you're looking for.</p>
+                    </div>
+                `;
+            }
         }
 
         // Set up event listeners
@@ -543,6 +683,24 @@
                     button.classList.add('active');
                     filterApps();
                 });
+            });
+            
+            // Fetch GitHub repos button
+            fetchReposButton.addEventListener('click', () => {
+                const username = githubUsernameInput.value.trim();
+                if (username) {
+                    fetchGitHubRepos(username);
+                }
+            });
+            
+            // Allow pressing Enter in the username field
+            githubUsernameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const username = githubUsernameInput.value.trim();
+                    if (username) {
+                        fetchGitHubRepos(username);
+                    }
+                }
             });
         }
 
