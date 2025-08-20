@@ -1,94 +1,210 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>My GitHub Portfolio | Web App Showcase</title>
-
-    <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path fill='%234361ee' d='M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm0 90c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40z'/><path fill='%23ffffff' d='M50 20v40l25-15-25-15z'/></svg>">
-
-    <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Custom Styles -->
-    <link rel="stylesheet" href="style.css" />
-
-    <!-- PWA Support (Optional) -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#4361ee">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Portfolio | Modern Developer Showcase</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon" id="themeIcon"></i>
+    </div>
+
+    <!-- Cursor Effects -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- Particle Background -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Header -->
+    <header class="header-hero">
         <div class="container">
             <div class="header-content">
-                <h1><i class="fab fa-github"></i> My GitHub Portfolio</h1>
-                <p>Showcasing my open-source journey in one elegant hub</p>
-                <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark/light mode">
-                    <i class="fas fa-sun"></i>
-                </button>
+                <div class="logo-animation">
+                    <div class="logo-circle"></div>
+                    <i class="fab fa-github"></i>
+                </div>
+                <h1 class="glitch" data-text="GitHub Portfolio">GitHub Portfolio</h1>
+                <p class="subtitle">Discover. Explore. Create.</p>
+                
+                <div class="header-stats" id="headerStats">
+                    <div class="stat-card">
+                        <i class="fas fa-code-branch"></i>
+                        <span class="stat-number" data-target="0">0</span>
+                        <span class="stat-label">Repositories</span>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-star"></i>
+                        <span class="stat-number" data-target="0">0</span>
+                        <span class="stat-label">Total Stars</span>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-code"></i>
+                        <span class="stat-number" data-target="0">0</span>
+                        <span class="stat-label">Languages</span>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <span class="stat-number" data-target="0">0</span>
+                        <span class="stat-label">Total Forks</span>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
 
-    <main class="container">
-        <section class="github-setup">
-            <h2><i class="fab fa-github"></i> Fetch Your Projects</h2>
-            <p>Enter your GitHub username to load your public repositories.</p>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- GitHub Setup Section -->
+            <div class="setup-section glassmorphism">
+                <div class="setup-header">
+                    <h2><i class="fab fa-github"></i> Connect Your GitHub</h2>
+                    <div class="pulse-indicator"></div>
+                </div>
+                
+                <div class="github-input-wrapper">
+                    <div class="input-group">
+                        <input type="text" id="githubUsername" placeholder="Enter GitHub username" value="MangalNathYadav" class="modern-input">
+                        <button id="fetchRepos" class="btn-primary">
+                            <span>Load Projects</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    <div class="input-hint">Press Enter or click to load repositories</div>
+                </div>
 
-            <div class="github-input">
-                <input type="text" id="githubUsername" placeholder="e.g., MangalNathYadav" value="MangalNathYadav">
-                <button id="fetchRepos">Load Projects</button>
+                <div class="quick-stats" id="quickStats"></div>
             </div>
 
-            <div class="setup-steps">
-                <p><strong>How it works:</strong></p>
-                <ol>
-                    <li>Enter your GitHub username</li>
-                    <li>Click "Load Projects"</li>
-                    <li>Explore your apps with filters & search</li>
-                    <li>Enjoy live previews & stats!</li>
-                </ol>
-            </div>
-        </section>
+            <!-- Advanced Controls -->
+            <div class="controls-section">
+                <div class="search-section">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search projects..." class="search-input">
+                        <div class="search-suggestions" id="searchSuggestions"></div>
+                    </div>
+                </div>
 
-        <section class="search-filter">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Search by name or description...">
+                <div class="filter-section">
+                    <div class="filter-group">
+                        <label>Category</label>
+                        <div class="filter-chips">
+                            <button class="chip active" data-filter="all">All</button>
+                            <button class="chip" data-filter="javascript">JavaScript</button>
+                            <button class="chip" data-filter="typescript">TypeScript</button>
+                            <button class="chip" data-filter="python">Python</button>
+                            <button class="chip" data-filter="html">HTML/CSS</button>
+                            <button class="chip" data-filter="java">Java</button>
+                            <button class="chip" data-filter="react">React</button>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Sort By</label>
+                        <select id="sortSelect" class="modern-select">
+                            <option value="updated">Recently Updated</option>
+                            <option value="created">Recently Created</option>
+                            <option value="stars">Most Stars</option>
+                            <option value="forks">Most Forks</option>
+                            <option value="name">Name (A-Z)</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>View</label>
+                        <div class="view-toggles">
+                            <button class="view-btn active" data-view="grid">
+                                <i class="fas fa-th"></i>
+                            </button>
+                            <button class="view-btn" data-view="list">
+                                <i class="fas fa-list"></i>
+                            </button>
+                            <button class="view-btn" data-view="compact">
+                                <i class="fas fa-grip-lines"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="filter-buttons">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="javascript">JavaScript</button>
-                <button class="filter-btn" data-filter="html">HTML</button>
-                <button class="filter-btn" data-filter="css">CSS</button>
-                <button class="filter-btn" data-filter="python">Python</button>
-                <button class="filter-btn" data-filter="java">Java</button>
-                <button class="filter-btn" data-filter="react">React</button>
-                <button class="filter-btn" data-filter="vue">Vue</button>
+            <!-- Projects Container -->
+            <div class="projects-container" id="projectsContainer">
+                <div class="loading-skeleton">
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                </div>
             </div>
-        </section>
 
-        <section class="apps-grid" id="appsContainer">
-            <div class="loading">
-                <div class="spinner"></div>
+            <!-- Language Chart -->
+            <div class="analytics-section glassmorphism" id="analyticsSection" style="display: none;">
+                <h3><i class="fas fa-chart-pie"></i> Language Distribution</h3>
+                <div class="language-chart" id="languageChart"></div>
+                <div class="chart-legend" id="chartLegend"></div>
             </div>
-        </section>
+        </div>
     </main>
 
-    <footer>
+    <!-- Floating Action Button -->
+    <div class="fab-container">
+        <button class="fab" id="fabButton">
+            <i class="fas fa-plus"></i>
+        </button>
+        <div class="fab-menu">
+            <button class="fab-option" id="exportBtn" title="Export Data">
+                <i class="fas fa-download"></i>
+            </button>
+            <button class="fab-option" id="refreshBtn" title="Refresh">
+                <i class="fas fa-sync"></i>
+            </button>
+            <button class="fab-option" id="scrollTopBtn" title="Scroll to Top">
+                <i class="fas fa-arrow-up"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="modern-footer">
         <div class="container">
-            <p>
-                Built with <i class="fas fa-heart" style="color: var(--danger);"></i> by <strong>Mangal Nath Yadav</strong>
-                | <a href="https://github.com/MangalNathYadav" target="_blank"><i class="fab fa-github"></i> GitHub</a>
-                | <a href="#" target="_blank"><i class="fas fa-link"></i> Portfolio</a>
-            </p>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About</h4>
+                    <p>A modern GitHub portfolio viewer with advanced features and beautiful design.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-codepen"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Stats</h4>
+                    <div id="footerStats">
+                        <p>Projects Loaded: <span id="projectCount">0</span></p>
+                        <p>Last Updated: <span id="lastUpdated">Never</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>Made with <i class="fas fa-heart pulse"></i> by Your Name | © 2024</p>
+            </div>
         </div>
     </footer>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span class="toast-message"></span>
+    </div>
 
     <script src="app.js"></script>
 </body>
