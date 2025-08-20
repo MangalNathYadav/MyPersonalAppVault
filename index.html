@@ -3,207 +3,418 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Portfolio | Modern Developer Showcase</title>
+    <title>GitHub Portfolio 3D | Next-Gen Developer Showcase</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Theme Toggle -->
-    <div class="theme-toggle" id="themeToggle">
-        <i class="fas fa-moon" id="themeIcon"></i>
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-content">
+            <div class="cube-loader">
+                <div class="cube-face"></div>
+                <div class="cube-face"></div>
+                <div class="cube-face"></div>
+                <div class="cube-face"></div>
+                <div class="cube-face"></div>
+                <div class="cube-face"></div>
+            </div>
+            <p class="loading-text">Initializing Portfolio</p>
+        </div>
     </div>
 
-    <!-- Cursor Effects -->
-    <div class="cursor-dot"></div>
-    <div class="cursor-outline"></div>
+    <!-- 3D Background -->
+    <div class="background-3d">
+        <canvas id="canvas3d"></canvas>
+        <div class="gradient-orbs">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+    </div>
 
-    <!-- Particle Background -->
-    <div class="particles" id="particles"></div>
+    <!-- Advanced Cursor -->
+    <div class="cursor">
+        <div class="cursor-ball"></div>
+        <div class="cursor-ring"></div>
+    </div>
 
-    <!-- Header -->
-    <header class="header-hero">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo-animation">
-                    <div class="logo-circle"></div>
+    <!-- Navigation Bar -->
+    <nav class="navbar glass-nav">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <div class="logo-3d">
                     <i class="fab fa-github"></i>
                 </div>
-                <h1 class="glitch" data-text="GitHub Portfolio">GitHub Portfolio</h1>
-                <p class="subtitle">Discover. Explore. Create.</p>
+                <span class="logo-text">Portfolio<span class="accent">3D</span></span>
+            </div>
+            
+            <div class="nav-menu">
+                <button class="nav-item" data-section="home">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </button>
+                <button class="nav-item" data-section="projects">
+                    <i class="fas fa-code"></i>
+                    <span>Projects</span>
+                </button>
+                <button class="nav-item" data-section="analytics">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </button>
+                <button class="nav-item" data-section="about">
+                    <i class="fas fa-user"></i>
+                    <span>About</span>
+                </button>
+            </div>
+
+            <div class="nav-actions">
+                <button class="theme-switch" id="themeSwitch">
+                    <div class="switch-handle">
+                        <i class="fas fa-sun"></i>
+                        <i class="fas fa-moon"></i>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="heroSection">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge floating">
+                    <span class="badge-text">Developer Portfolio</span>
+                    <div class="badge-glow"></div>
+                </div>
                 
-                <div class="header-stats" id="headerStats">
-                    <div class="stat-card">
-                        <i class="fas fa-code-branch"></i>
-                        <span class="stat-number" data-target="0">0</span>
-                        <span class="stat-label">Repositories</span>
+                <h1 class="hero-title">
+                    <span class="title-word">GitHub</span>
+                    <span class="title-word gradient-text">Portfolio</span>
+                    <span class="title-word">Showcase</span>
+                </h1>
+                
+                <p class="hero-description">
+                    Experience your code in a whole new dimension with 3D visualizations and modern interactions
+                </p>
+
+                <div class="hero-stats" id="heroStats">
+                    <div class="stat-box-3d" data-tilt>
+                        <div class="stat-inner">
+                            <i class="fas fa-folder"></i>
+                            <div class="stat-value" data-count="0">0</div>
+                            <div class="stat-label">Projects</div>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <i class="fas fa-star"></i>
-                        <span class="stat-number" data-target="0">0</span>
-                        <span class="stat-label">Total Stars</span>
+                    <div class="stat-box-3d" data-tilt>
+                        <div class="stat-inner">
+                            <i class="fas fa-star"></i>
+                            <div class="stat-value" data-count="0">0</div>
+                            <div class="stat-label">Stars</div>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <i class="fas fa-code"></i>
-                        <span class="stat-number" data-target="0">0</span>
-                        <span class="stat-label">Languages</span>
+                    <div class="stat-box-3d" data-tilt>
+                        <div class="stat-inner">
+                            <i class="fas fa-code-branch"></i>
+                            <div class="stat-value" data-count="0">0</div>
+                            <div class="stat-label">Forks</div>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <i class="fas fa-users"></i>
-                        <span class="stat-number" data-target="0">0</span>
-                        <span class="stat-label">Total Forks</span>
+                    <div class="stat-box-3d" data-tilt>
+                        <div class="stat-inner">
+                            <i class="fas fa-users"></i>
+                            <div class="stat-value" data-count="0">0</div>
+                            <div class="stat-label">Contributors</div>
+                        </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="hero-3d-model">
+                <div class="floating-cards">
+                    <div class="float-card card-1" data-depth="0.2"></div>
+                    <div class="float-card card-2" data-depth="0.4"></div>
+                    <div class="float-card card-3" data-depth="0.6"></div>
                 </div>
             </div>
         </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="main-content">
+        <div class="scroll-indicator">
+            <div class="mouse-3d">
+                <div class="wheel"></div>
+            </div>
+            <span>Scroll to explore</span>
+        </div>
+    </section>
+
+    <!-- Connection Section -->
+    <section class="connection-section glass-morph">
         <div class="container">
-            <!-- GitHub Setup Section -->
-            <div class="setup-section glassmorphism">
-                <div class="setup-header">
-                    <h2><i class="fab fa-github"></i> Connect Your GitHub</h2>
-                    <div class="pulse-indicator"></div>
+            <div class="connection-header">
+                <h2 class="section-title">
+                    <span class="title-icon"><i class="fab fa-github"></i></span>
+                    Connect Your GitHub
+                </h2>
+                <div class="connection-status" id="connectionStatus">
+                    <div class="status-dot"></div>
+                    <span>Ready to connect</span>
                 </div>
-                
-                <div class="github-input-wrapper">
-                    <div class="input-group">
-                        <input type="text" id="githubUsername" placeholder="Enter GitHub username" value="MangalNathYadav" class="modern-input">
-                        <button id="fetchRepos" class="btn-primary">
-                            <span>Load Projects</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
-                    <div class="input-hint">Press Enter or click to load repositories</div>
-                </div>
-
-                <div class="quick-stats" id="quickStats"></div>
             </div>
 
-            <!-- Advanced Controls -->
-            <div class="controls-section">
-                <div class="search-section">
-                    <div class="search-wrapper">
+            <div class="connection-form">
+                <div class="input-3d-wrapper">
+                    <input 
+                        type="text" 
+                        id="githubUsername" 
+                        class="input-3d" 
+                        placeholder="Enter GitHub username"
+                        value="torvalds"
+                    >
+                    <div class="input-border"></div>
+                    <div class="input-glow"></div>
+                </div>
+                
+                <button class="btn-3d" id="loadReposBtn">
+                    <span class="btn-text">Load Portfolio</span>
+                    <span class="btn-gradient"></span>
+                    <span class="btn-particles">
+                        <i></i><i></i><i></i><i></i><i></i>
+                    </span>
+                </button>
+            </div>
+
+            <div class="quick-links">
+                <button class="quick-link" data-username="torvalds">
+                    <img src="https://github.com/torvalds.png" alt="Linus Torvalds">
+                    <span>Linus Torvalds</span>
+                </button>
+                <button class="quick-link" data-username="gaearon">
+                    <img src="https://github.com/gaearon.png" alt="Dan Abramov">
+                    <span>Dan Abramov</span>
+                </button>
+                <button class="quick-link" data-username="yyx990803">
+                    <img src="https://github.com/yyx990803.png" alt="Evan You">
+                    <span>Evan You</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Controls Section -->
+    <section class="controls-section" id="controlsSection">
+        <div class="container">
+            <div class="controls-wrapper">
+                <!-- Search Box -->
+                <div class="search-3d">
+                    <div class="search-inner">
                         <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="Search projects..." class="search-input">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Search projects..."
+                            class="search-input-3d"
+                        >
                         <div class="search-suggestions" id="searchSuggestions"></div>
                     </div>
+                    <div class="search-glow"></div>
                 </div>
 
-                <div class="filter-section">
+                <!-- Filters -->
+                <div class="filter-container">
                     <div class="filter-group">
-                        <label>Category</label>
-                        <div class="filter-chips">
-                            <button class="chip active" data-filter="all">All</button>
-                            <button class="chip" data-filter="javascript">JavaScript</button>
-                            <button class="chip" data-filter="typescript">TypeScript</button>
-                            <button class="chip" data-filter="python">Python</button>
-                            <button class="chip" data-filter="html">HTML/CSS</button>
-                            <button class="chip" data-filter="java">Java</button>
-                            <button class="chip" data-filter="react">React</button>
+                        <label class="filter-label">Language</label>
+                        <div class="filter-pills">
+                            <button class="pill-3d active" data-filter="all">
+                                <span>All</span>
+                                <div class="pill-glow"></div>
+                            </button>
+                            <button class="pill-3d" data-filter="javascript">
+                                <span>JavaScript</span>
+                                <div class="pill-glow"></div>
+                            </button>
+                            <button class="pill-3d" data-filter="typescript">
+                                <span>TypeScript</span>
+                                <div class="pill-glow"></div>
+                            </button>
+                            <button class="pill-3d" data-filter="python">
+                                <span>Python</span>
+                                <div class="pill-glow"></div>
+                            </button>
+                            <button class="pill-3d" data-filter="java">
+                                <span>Java</span>
+                                <div class="pill-glow"></div>
+                            </button>
+                            <button class="pill-3d" data-filter="go">
+                                <span>Go</span>
+                                <div class="pill-glow"></div>
+                            </button>
                         </div>
                     </div>
 
                     <div class="filter-group">
-                        <label>Sort By</label>
-                        <select id="sortSelect" class="modern-select">
-                            <option value="updated">Recently Updated</option>
-                            <option value="created">Recently Created</option>
-                            <option value="stars">Most Stars</option>
-                            <option value="forks">Most Forks</option>
-                            <option value="name">Name (A-Z)</option>
-                        </select>
+                        <label class="filter-label">Sort By</label>
+                        <div class="select-3d">
+                            <select id="sortSelect" class="select-input">
+                                <option value="stars">Most Stars</option>
+                                <option value="updated">Recently Updated</option>
+                                <option value="created">Recently Created</option>
+                                <option value="forks">Most Forks</option>
+                                <option value="name">Alphabetical</option>
+                            </select>
+                            <div class="select-arrow"><i class="fas fa-chevron-down"></i></div>
+                        </div>
                     </div>
 
                     <div class="filter-group">
-                        <label>View</label>
-                        <div class="view-toggles">
-                            <button class="view-btn active" data-view="grid">
-                                <i class="fas fa-th"></i>
+                        <label class="filter-label">View Mode</label>
+                        <div class="view-switcher">
+                            <button class="view-mode active" data-view="cards">
+                                <i class="fas fa-th-large"></i>
                             </button>
-                            <button class="view-btn" data-view="list">
+                            <button class="view-mode" data-view="list">
                                 <i class="fas fa-list"></i>
                             </button>
-                            <button class="view-btn" data-view="compact">
-                                <i class="fas fa-grip-lines"></i>
+                            <button class="view-mode" data-view="3d">
+                                <i class="fas fa-cube"></i>
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <!-- Projects Container -->
-            <div class="projects-container" id="projectsContainer">
-                <div class="loading-skeleton">
-                    <div class="skeleton-card"></div>
-                    <div class="skeleton-card"></div>
-                    <div class="skeleton-card"></div>
+    <!-- Projects Section -->
+    <section class="projects-section" id="projectsSection">
+        <div class="container">
+            <div class="projects-header">
+                <h2 class="section-title">
+                    <span>Repository Collection</span>
+                </h2>
+                <div class="project-count">
+                    <span id="projectCount">0</span> projects found
                 </div>
             </div>
 
-            <!-- Language Chart -->
-            <div class="analytics-section glassmorphism" id="analyticsSection" style="display: none;">
-                <h3><i class="fas fa-chart-pie"></i> Language Distribution</h3>
-                <div class="language-chart" id="languageChart"></div>
-                <div class="chart-legend" id="chartLegend"></div>
+            <div class="projects-container" id="projectsContainer">
+                <!-- Projects will be loaded here -->
+                <div class="loading-container">
+                    <div class="dna-loader">
+                        <div class="dna-strand"></div>
+                        <div class="dna-strand"></div>
+                    </div>
+                    <p>Loading repositories...</p>
+                </div>
             </div>
         </div>
-    </main>
+    </section>
 
-    <!-- Floating Action Button -->
-    <div class="fab-container">
-        <button class="fab" id="fabButton">
-            <i class="fas fa-plus"></i>
-        </button>
-        <div class="fab-menu">
-            <button class="fab-option" id="exportBtn" title="Export Data">
-                <i class="fas fa-download"></i>
-            </button>
-            <button class="fab-option" id="refreshBtn" title="Refresh">
-                <i class="fas fa-sync"></i>
-            </button>
-            <button class="fab-option" id="scrollTopBtn" title="Scroll to Top">
-                <i class="fas fa-arrow-up"></i>
-            </button>
+    <!-- Analytics Section -->
+    <section class="analytics-section" id="analyticsSection">
+        <div class="container">
+            <h2 class="section-title">Portfolio Analytics</h2>
+            
+            <div class="analytics-grid">
+                <div class="chart-container glass-morph">
+                    <h3>Language Distribution</h3>
+                    <div class="chart-3d" id="languageChart">
+                        <canvas id="langCanvas"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-container glass-morph">
+                    <h3>Activity Timeline</h3>
+                    <div class="timeline-3d" id="timeline">
+                        <div class="timeline-line"></div>
+                        <div class="timeline-items"></div>
+                    </div>
+                </div>
+                
+                <div class="chart-container glass-morph">
+                    <h3>Top Projects</h3>
+                    <div class="top-projects" id="topProjects"></div>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
 
     <!-- Footer -->
-    <footer class="modern-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>About</h4>
-                    <p>A modern GitHub portfolio viewer with advanced features and beautiful design.</p>
+    <footer class="footer-3d">
+        <div class="footer-content">
+            <div class="footer-waves">
+                <svg viewBox="0 0 1440 320">
+                    <path fill="currentColor" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,133.3C960,128,1056,96,1152,90.7C1248,85,1344,107,1392,117.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+                </svg>
+            </div>
+            
+            <div class="footer-main">
+                <div class="footer-brand">
+                    <h3>Portfolio<span class="accent">3D</span></h3>
+                    <p>Next-generation GitHub portfolio viewer</p>
                 </div>
-                <div class="footer-section">
-                    <h4>Connect</h4>
-                    <div class="social-links">
-                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-codepen"></i></a>
-                    </div>
-                </div>
-                <div class="footer-section">
-                    <h4>Stats</h4>
-                    <div id="footerStats">
-                        <p>Projects Loaded: <span id="projectCount">0</span></p>
-                        <p>Last Updated: <span id="lastUpdated">Never</span></p>
-                    </div>
+                
+                <div class="footer-links">
+                    <a href="#" class="social-3d">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="#" class="social-3d">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="#" class="social-3d">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-3d">
+                        <i class="fab fa-codepen"></i>
+                    </a>
                 </div>
             </div>
+            
             <div class="footer-bottom">
-                <p>Made with <i class="fas fa-heart pulse"></i> by Your Name | © 2024</p>
+                <p>© 2024 Portfolio3D | Made with <i class="fas fa-heart pulse-heart"></i> and JavaScript</p>
             </div>
         </div>
     </footer>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast">
-        <i class="fas fa-check-circle"></i>
-        <span class="toast-message"></span>
+    <!-- Floating Menu -->
+    <div class="floating-menu" id="floatingMenu">
+        <button class="fab-3d" id="fabToggle">
+            <i class="fas fa-plus"></i>
+        </button>
+        <div class="fab-options">
+            <button class="fab-option" data-action="export">
+                <i class="fas fa-download"></i>
+                <span>Export</span>
+            </button>
+            <button class="fab-option" data-action="share">
+                <i class="fas fa-share"></i>
+                <span>Share</span>
+            </button>
+            <button class="fab-option" data-action="refresh">
+                <i class="fas fa-sync"></i>
+                <span>Refresh</span>
+            </button>
+            <button class="fab-option" data-action="top">
+                <i class="fas fa-arrow-up"></i>
+                <span>Top</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Notification System -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Modal -->
+    <div class="modal-3d" id="projectModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
     </div>
 
     <script src="app.js"></script>

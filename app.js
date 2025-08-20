@@ -1,141 +1,340 @@
-// Advanced GitHub Portfolio App with Modern Features
+// ============================================
+// ULTRA MODERN 3D PORTFOLIO APP
+// ============================================
 
-class GitHubPortfolio {
+class Portfolio3D {
     constructor() {
         this.repos = [];
         this.filteredRepos = [];
-        this.currentView = 'grid';
-        this.isDarkTheme = localStorage.getItem('darkTheme') === 'true';
+        this.currentView = 'cards';
+        this.currentFilter = 'all';
+        this.currentSort = 'stars';
+        this.isLoading = false;
         this.username = '';
         
-        this.initializeElements();
-        this.initializeTheme();
-        this.setupEventListeners();
-        this.createParticles();
-        this.setupCustomCursor();
-        this.initializeApp();
+        this.init();
     }
 
-    initializeElements() {
-        // Core elements
+    init() {
+        this.setupElements();
+        this.setupEventListeners();
+        this.setupAnimations();
+        this.setup3DEffects();
+        this.setupCursor();
+        this.hidePreloader();
+        
+        // Initialize with sample data
+        setTimeout(() => {
+            this.loadSampleUser();
+        }, 1000);
+    }
+
+    setupElements() {
         this.elements = {
+            // Core elements
+            preloader: document.getElementById('preloader'),
             projectsContainer: document.getElementById('projectsContainer'),
+            projectCount: document.getElementById('projectCount'),
             searchInput: document.getElementById('searchInput'),
             githubUsername: document.getElementById('githubUsername'),
-            fetchReposBtn: document.getElementById('fetchRepos'),
-            themeToggle: document.getElementById('themeToggle'),
-            themeIcon: document.getElementById('themeIcon'),
-            toast: document.getElementById('toast'),
+            loadReposBtn: document.getElementById('loadReposBtn'),
+            connectionStatus: document.getElementById('connectionStatus'),
+            
+            // Controls
+            filterPills: document.querySelectorAll('.pill-3d'),
+            viewModes: document.querySelectorAll('.view-mode'),
             sortSelect: document.getElementById('sortSelect'),
-            fabButton: document.getElementById('fabButton'),
+            
+            // Theme
+            themeSwitch: document.getElementById('themeSwitch'),
+            
+            // FAB
+            floatingMenu: document.getElementById('floatingMenu'),
+            fabToggle: document.getElementById('fabToggle'),
+            fabOptions: document.querySelectorAll('.fab-option'),
+            
+            // Modal
+            projectModal: document.getElementById('projectModal'),
+            modalClose: document.getElementById('modalClose'),
+            modalBody: document.getElementById('modalBody'),
+            
+            // Quick links
+            quickLinks: document.querySelectorAll('.quick-link'),
+            
+            // Analytics
             analyticsSection: document.getElementById('analyticsSection'),
             
-            // Stats elements
-            headerStats: document.getElementById('headerStats'),
-            projectCount: document.getElementById('projectCount'),
-            lastUpdated: document.getElementById('lastUpdated'),
-            
-            // Filter elements
-            filterChips: document.querySelectorAll('.chip'),
-            viewButtons: document.querySelectorAll('.view-btn'),
-            
-            // FAB options
-            exportBtn: document.getElementById('exportBtn'),
-            refreshBtn: document.getElementById('refreshBtn'),
-            scrollTopBtn: document.getElementById('scrollTopBtn'),
+            // Notification container
+            notificationContainer: document.getElementById('notificationContainer')
         };
-    }
-
-    initializeTheme() {
-        if (this.isDarkTheme) {
-            document.body.classList.add('dark-theme');
-            this.elements.themeIcon.className = 'fas fa-sun';
-        }
     }
 
     setupEventListeners() {
-        // Theme toggle
-        this.elements.themeToggle.addEventListener('click', () => this.toggleTheme());
-        
-        // GitHub username input
-        this.elements.fetchReposBtn.addEventListener('click', () => this.fetchRepos());
+        // Load repos
+        this.elements.loadReposBtn.addEventListener('click', () => this.loadRepos());
         this.elements.githubUsername.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.fetchRepos();
+            if (e.key === 'Enter') this.loadRepos();
         });
-        
+
+        // Quick links
+        this.elements.quickLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                const username = link.dataset.username;
+                this.elements.githubUsername.value = username;
+                this.loadRepos();
+            });
+        });
+
         // Search
-        this.elements.searchInput.addEventListener('input', (e) => this.handleSearch(e.target.value));
-        
+        let searchTimeout;
+        this.elements.searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                this.handleSearch(e.target.value);
+            }, 300);
+        });
+
         // Filters
-        this.elements.filterChips.forEach(chip => {
-            chip.addEventListener('click', (e) => this.handleFilter(e));
+        this.elements.filterPills.forEach(pill => {
+            pill.addEventListener('click', () => this.handleFilter(pill));
         });
-        
-        // View toggles
-        this.elements.viewButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => this.changeView(e));
+
+        // View modes
+        this.elements.viewModes.forEach(mode => {
+            mode.addEventListener('click', () => this.changeView(mode));
         });
-        
+
         // Sort
         this.elements.sortSelect.addEventListener('change', () => this.sortRepos());
-        
+
+        // Theme
+        this.elements.themeSwitch.addEventListener('click', () => this.toggleTheme());
+
         // FAB
-        this.elements.fabButton.addEventListener('click', () => this.toggleFAB());
-        this.elements.exportBtn?.addEventListener('click', () => this.exportData());
-        this.elements.refreshBtn?.addEventListener('click', () => this.fetchRepos());
-        this.elements.scrollTopBtn?.addEventListener('click', () => this.scrollToTop());
+        this.elements.fabToggle.addEventListener('click', () => this.toggleFAB());
+        this.elements.fabOptions.forEach(option => {
+            option.addEventListener('click', () => this.handleFABAction(option.dataset.action));
+        });
+
+        // Modal
+        this.elements.modalClose.addEventListener('click', () => this.closeModal());
+        this.elements.projectModal.addEventListener('click', (e) => {
+            if (e.target === this.elements.projectModal) this.closeModal();
+        });
+
+        // Scroll animations
+        window.addEventListener('scroll', () => this.handleScroll());
     }
 
-    toggleTheme() {
-        this.isDarkTheme = !this.isDarkTheme;
-        document.body.classList.toggle('dark-theme');
-        this.elements.themeIcon.className = this.isDarkTheme ? 'fas fa-sun' : 'fas fa-moon';
-        localStorage.setItem('darkTheme', this.isDarkTheme);
-        
-        this.showToast('Theme changed successfully');
-    }
-
-    createParticles() {
-        const particlesContainer = document.getElementById('particles');
-        const particleCount = 50;
-        
-        for (let i = 0; i < particleCount; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 15 + 's';
-            particle.style.animationDuration = 15 + Math.random() * 10 + 's';
-            particlesContainer.appendChild(particle);
-        }
-    }
-
-    setupCustomCursor() {
-        const cursor = {
-            dot: document.querySelector('.cursor-dot'),
-            outline: document.querySelector('.cursor-outline')
+    setupAnimations() {
+        // GSAP-like animations using Web Animations API
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
         };
-        
-        window.addEventListener('mousemove', (e) => {
-            const posX = e.clientX;
-            const posY = e.clientY;
-            
-            cursor.dot.style.left = `${posX}px`;
-            cursor.dot.style.top = `${posY}px`;
-            
-            cursor.outline.style.left = `${posX}px`;
-            cursor.outline.style.top = `${posY}px`;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated');
+                }
+            });
+        }, observerOptions);
+
+        // Observe sections
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
         });
     }
 
-    async fetchRepos() {
+    setup3DEffects() {
+        // Tilt effect for 3D elements
+        const tiltElements = document.querySelectorAll('[data-tilt]');
+        
+        tiltElements.forEach(element => {
+            element.addEventListener('mousemove', (e) => {
+                const rect = element.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / 10;
+                const rotateY = (centerX - x) / 10;
+                
+                element.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                element.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+            });
+        });
+
+        // 3D Canvas background
+        this.setup3DCanvas();
+    }
+
+    setup3DCanvas() {
+        const canvas = document.getElementById('canvas3d');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const particles = [];
+        const particleCount = 50;
+        
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.z = Math.random() * 1000;
+                this.size = Math.random() * 2;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.speedZ = Math.random() * 1;
+            }
+            
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.z -= this.speedZ;
+                
+                if (this.z <= 0) this.reset();
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+            
+            draw() {
+                const scale = 1000 / (1000 + this.z);
+                const x2d = (this.x - canvas.width / 2) * scale + canvas.width / 2;
+                const y2d = (this.y - canvas.height / 2) * scale + canvas.height / 2;
+                const size = this.size * scale;
+                
+                ctx.beginPath();
+                ctx.arc(x2d, y2d, size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(99, 102, 241, ${scale * 0.5})`;
+                ctx.fill();
+            }
+        }
+        
+        // Create particles
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+        
+        // Animation loop
+        const animate = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            
+            // Connect nearby particles
+            particles.forEach((p1, i) => {
+                particles.slice(i + 1).forEach(p2 => {
+                    const distance = Math.sqrt(
+                        Math.pow(p1.x - p2.x, 2) + 
+                        Math.pow(p1.y - p2.y, 2) + 
+                        Math.pow(p1.z - p2.z, 2)
+                    );
+                    
+                    if (distance < 150) {
+                        ctx.beginPath();
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.strokeStyle = `rgba(99, 102, 241, ${0.1 * (1 - distance / 150)})`;
+                        ctx.stroke();
+                    }
+                });
+            });
+            
+            requestAnimationFrame(animate);
+        };
+        
+        animate();
+        
+        // Resize handler
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    }
+
+    setupCursor() {
+        const cursor = {
+            ball: document.querySelector('.cursor-ball'),
+            ring: document.querySelector('.cursor-ring')
+        };
+        
+        if (!cursor.ball || !cursor.ring) return;
+        
+        let mouseX = 0, mouseY = 0;
+        let ballX = 0, ballY = 0;
+        let ringX = 0, ringY = 0;
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+        
+        const animateCursor = () => {
+            // Smooth follow animation
+            ballX += (mouseX - ballX) * 0.2;
+            ballY += (mouseY - ballY) * 0.2;
+            ringX += (mouseX - ringX) * 0.1;
+            ringY += (mouseY - ringY) * 0.1;
+            
+            cursor.ball.style.left = ballX - 7.5 + 'px';
+            cursor.ball.style.top = ballY - 7.5 + 'px';
+            cursor.ring.style.left = ringX - 20 + 'px';
+            cursor.ring.style.top = ringY - 20 + 'px';
+            
+            requestAnimationFrame(animateCursor);
+        };
+        
+        animateCursor();
+        
+        // Hover effects
+        const hoverElements = document.querySelectorAll('button, a, .project-card-3d');
+        hoverElements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                cursor.ring.style.transform = 'scale(1.5)';
+                cursor.ball.style.transform = 'scale(0.5)';
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                cursor.ring.style.transform = 'scale(1)';
+                cursor.ball.style.transform = 'scale(1)';
+            });
+        });
+    }
+
+    hidePreloader() {
+        setTimeout(() => {
+            this.elements.preloader.classList.add('hidden');
+        }, 1500);
+    }
+
+    async loadRepos() {
         const username = this.elements.githubUsername.value.trim();
         if (!username) {
-            this.showToast('Please enter a GitHub username', 'warning');
+            this.showNotification('Please enter a GitHub username', 'warning');
             return;
         }
         
         this.username = username;
+        this.isLoading = true;
         this.showLoading();
+        this.updateConnectionStatus('loading');
         
         try {
             const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=100&sort=updated`);
@@ -146,76 +345,81 @@ class GitHubPortfolio {
             
             const repos = await response.json();
             
-            // Process and enhance repo data
-            this.repos = repos.map(repo => ({
+            // Process repos
+            this.repos = repos.map((repo, index) => ({
                 ...repo,
-                image: this.generateProjectImage(repo.name),
-                languages: [] // Will be populated if needed
+                index: index,
+                imageUrl: this.generateImageUrl(repo.name, index)
             }));
             
             this.filteredRepos = [...this.repos];
-            this.updateStats();
+            this.sortRepos();
             this.renderProjects();
+            this.updateStats();
             this.showAnalytics();
+            this.updateConnectionStatus('connected');
             
-            this.showToast(`Successfully loaded ${repos.length} repositories`);
-            this.elements.lastUpdated.textContent = new Date().toLocaleString();
+            this.showNotification(`Successfully loaded ${repos.length} repositories`, 'success');
             
         } catch (error) {
-            console.error('Error fetching repos:', error);
-            this.showToast('Failed to load repositories. Using sample data.', 'error');
+            console.error('Error loading repos:', error);
+            this.showNotification('Failed to load repositories', 'error');
+            this.updateConnectionStatus('error');
             this.loadSampleData();
+        } finally {
+            this.isLoading = false;
         }
     }
 
-    generateProjectImage(name) {
+    generateImageUrl(name, index) {
         const images = [
-            'https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=800',
-            'https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?w=800',
-            'https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=800',
-            'https://images.unsplash.com/photo-1537432376769-00f5c2f4c8d2?w=800',
-            'https://images.unsplash.com/photo-1605379399642-870262d3d051?w=800'
+            'https://images.unsplash.com/photo-1517180102446-f3ece451e9d8',
+            'https://images.unsplash.com/photo-1516259762381-22954d7d3ad2',
+            'https://images.unsplash.com/photo-1542831371-29b0f74f9713',
+            'https://images.unsplash.com/photo-1537432376769-00f5c2f4c8d2',
+            'https://images.unsplash.com/photo-1605379399642-870262d3d051',
+            'https://images.unsplash.com/photo-1607706189992-eae578626c86',
+            'https://images.unsplash.com/photo-1504639725590-34d0984388bd',
+            'https://images.unsplash.com/photo-1461749280684-dccba630e2f6'
         ];
         
-        // Generate consistent image based on project name
-        const index = name.length % images.length;
-        return images[index];
+        return `${images[index % images.length]}?w=800&h=600&fit=crop`;
     }
 
-    updateStats() {
-        const stats = {
-            repos: this.repos.length,
-            stars: this.repos.reduce((acc, repo) => acc + repo.stargazers_count, 0),
-            forks: this.repos.reduce((acc, repo) => acc + repo.forks_count, 0),
-            languages: [...new Set(this.repos.map(repo => repo.language).filter(Boolean))].length
-        };
+    updateConnectionStatus(status) {
+        const statusElement = this.elements.connectionStatus;
+        const statusDot = statusElement.querySelector('.status-dot');
+        const statusText = statusElement.querySelector('span:last-child');
         
-        // Animate counter
-        this.animateCounter(document.querySelector('[data-target="0"]'), stats.repos);
-        this.animateCounter(document.querySelectorAll('[data-target="0"]')[1], stats.stars);
-        this.animateCounter(document.querySelectorAll('[data-target="0"]')[2], stats.languages);
-        this.animateCounter(document.querySelectorAll('[data-target="0"]')[3], stats.forks);
-        
-        this.elements.projectCount.textContent = stats.repos;
+        switch(status) {
+            case 'loading':
+                statusDot.style.background = 'var(--warning)';
+                statusText.textContent = 'Connecting...';
+                break;
+            case 'connected':
+                statusDot.style.background = 'var(--success)';
+                statusText.textContent = `Connected to ${this.username}`;
+                break;
+            case 'error':
+                statusDot.style.background = 'var(--danger)';
+                statusText.textContent = 'Connection failed';
+                break;
+            default:
+                statusDot.style.background = 'var(--text-tertiary)';
+                statusText.textContent = 'Ready to connect';
+        }
     }
 
-    animateCounter(element, target) {
-        if (!element) return;
-        
-        const duration = 1500;
-        const start = parseInt(element.textContent) || 0;
-        const increment = (target - start) / (duration / 16);
-        let current = start;
-        
-        const timer = setInterval(() => {
-            current += increment;
-            if ((increment > 0 && current >= target) || (increment < 0 && current <= target)) {
-                element.textContent = target;
-                clearInterval(timer);
-            } else {
-                element.textContent = Math.floor(current);
-            }
-        }, 16);
+    showLoading() {
+        this.elements.projectsContainer.innerHTML = `
+            <div class="loading-container">
+                <div class="dna-loader">
+                    <div class="dna-strand"></div>
+                    <div class="dna-strand"></div>
+                </div>
+                <p>Loading repositories...</p>
+            </div>
+        `;
     }
 
     renderProjects() {
@@ -224,67 +428,144 @@ class GitHubPortfolio {
         
         if (this.filteredRepos.length === 0) {
             container.innerHTML = `
-                <div class="empty-state" style="grid-column: 1/-1; text-align: center; padding: 3rem;">
-                    <i class="fas fa-folder-open" style="font-size: 3rem; color: var(--text-tertiary); margin-bottom: 1rem; display: block;"></i>
-                    <h3>No Projects Found</h3>
-                    <p style="color: var(--text-secondary);">Try adjusting your search or filters</p>
+                <div class="loading-container">
+                    <i class="fas fa-folder-open" style="font-size: 3rem; color: var(--text-tertiary); margin-bottom: 1rem;"></i>
+                    <p>No repositories found</p>
                 </div>
             `;
+            this.elements.projectCount.textContent = '0';
             return;
         }
         
-        // Apply view class
+        // Update count
+        this.elements.projectCount.textContent = this.filteredRepos.length;
+        
+        // Set view class
         container.className = `projects-container ${this.currentView}-view`;
         
+        // Render cards
         this.filteredRepos.forEach((repo, index) => {
             const card = this.createProjectCard(repo, index);
             container.appendChild(card);
         });
+        
+        // Re-setup 3D effects for new cards
+        this.setup3DEffects();
     }
 
     createProjectCard(repo, index) {
         const card = document.createElement('div');
-        card.className = 'project-card';
-        card.style.animationDelay = `${index * 0.05}s`;
+        card.className = 'project-card-3d';
+        card.style.setProperty('--i', index);
         
-        const date = new Date(repo.created_at).toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'short' 
+        const language = repo.language || 'Code';
+        const stars = repo.stargazers_count || 0;
+        const forks = repo.forks_count || 0;
+        const description = repo.description || 'No description available';
+        const updatedAt = new Date(repo.updated_at).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
         });
         
         card.innerHTML = `
-            <div class="project-image">
-                <img src="${repo.image}" alt="${repo.name}" loading="lazy">
-                ${repo.language ? `<span class="project-badge">${repo.language}</span>` : ''}
+            <div class="card-image-3d">
+                <img src="${repo.imageUrl}" alt="${repo.name}" loading="lazy">
+                <span class="card-badge">${language}</span>
             </div>
-            <div class="project-content">
-                <h3 class="project-title">${repo.name}</h3>
-                <p class="project-description">${repo.description || 'No description available'}</p>
-                <div class="project-meta">
-                    <span class="meta-item">
-                        <i class="fas fa-star"></i> ${repo.stargazers_count}
-                    </span>
-                    <span class="meta-item">
-                        <i class="fas fa-code-branch"></i> ${repo.forks_count}
-                    </span>
-                    <span class="meta-item">
-                        <i class="fas fa-calendar"></i> ${date}
-                    </span>
+            <div class="card-content-3d">
+                <div class="card-title">
+                    <div class="card-title-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <span>${repo.name}</span>
                 </div>
-                <div class="project-actions">
+                <p class="card-description">${description}</p>
+                <div class="card-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-star"></i>
+                        <span>${stars}</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-code-branch"></i>
+                        <span>${forks}</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>${updatedAt}</span>
+                    </div>
+                </div>
+                <div class="card-actions">
                     ${repo.homepage ? `
-                        <a href="${repo.homepage}" target="_blank" class="project-link primary">
-                            <i class="fas fa-external-link-alt"></i> Live Demo
+                        <a href="${repo.homepage}" target="_blank" class="card-btn">
+                            <span><i class="fas fa-external-link-alt"></i> Demo</span>
                         </a>
                     ` : ''}
-                    <a href="${repo.html_url}" target="_blank" class="project-link secondary">
-                        <i class="fab fa-github"></i> Code
+                    <a href="${repo.html_url}" target="_blank" class="card-btn">
+                        <span><i class="fab fa-github"></i> Code</span>
                     </a>
                 </div>
             </div>
         `;
         
+        // Add click event for modal
+        card.addEventListener('click', (e) => {
+            if (!e.target.closest('.card-btn')) {
+                this.showProjectModal(repo);
+            }
+        });
+        
         return card;
+    }
+
+    showProjectModal(repo) {
+        const modal = this.elements.projectModal;
+        const modalBody = this.elements.modalBody;
+        
+        modalBody.innerHTML = `
+            <div style="padding: 2rem;">
+                <h2 style="margin-bottom: 1rem;">${repo.name}</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                    ${repo.description || 'No description available'}
+                </p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <div style="background: var(--surface); padding: 1rem; border-radius: 12px;">
+                        <i class="fas fa-star" style="color: var(--warning);"></i>
+                        <strong style="margin-left: 0.5rem;">${repo.stargazers_count}</strong> Stars
+                    </div>
+                    <div style="background: var(--surface); padding: 1rem; border-radius: 12px;">
+                        <i class="fas fa-code-branch" style="color: var(--primary);"></i>
+                        <strong style="margin-left: 0.5rem;">${repo.forks_count}</strong> Forks
+                    </div>
+                    <div style="background: var(--surface); padding: 1rem; border-radius: 12px;">
+                        <i class="fas fa-eye" style="color: var(--accent);"></i>
+                        <strong style="margin-left: 0.5rem;">${repo.watchers_count}</strong> Watchers
+                    </div>
+                    <div style="background: var(--surface); padding: 1rem; border-radius: 12px;">
+                        <i class="fas fa-exclamation-circle" style="color: var(--danger);"></i>
+                        <strong style="margin-left: 0.5rem;">${repo.open_issues_count}</strong> Issues
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem;">
+                    <a href="${repo.html_url}" target="_blank" class="btn-3d" style="text-decoration: none;">
+                        <span class="btn-text">View on GitHub</span>
+                    </a>
+                    ${repo.homepage ? `
+                        <a href="${repo.homepage}" target="_blank" class="btn-3d" style="text-decoration: none;">
+                            <span class="btn-text">Live Demo</span>
+                        </a>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+        
+        modal.classList.add('active');
+    }
+
+    closeModal() {
+        this.elements.projectModal.classList.remove('active');
     }
 
     handleSearch(query) {
@@ -300,38 +581,37 @@ class GitHubPortfolio {
             );
         }
         
+        this.applyCurrentFilter();
+        this.sortRepos();
         this.renderProjects();
     }
 
-    handleFilter(e) {
-        const chip = e.currentTarget;
-        const filter = chip.dataset.filter;
-        
+    handleFilter(pill) {
         // Update active state
-        this.elements.filterChips.forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
+        this.elements.filterPills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
         
-        if (filter === 'all') {
-            this.filteredRepos = [...this.repos];
-        } else {
-            this.filteredRepos = this.repos.filter(repo => {
-                const lang = (repo.language || '').toLowerCase();
-                return lang.includes(filter.toLowerCase());
-            });
-        }
-        
+        this.currentFilter = pill.dataset.filter;
+        this.applyCurrentFilter();
+        this.sortRepos();
         this.renderProjects();
     }
 
-    changeView(e) {
-        const btn = e.currentTarget;
-        const view = btn.dataset.view;
+    applyCurrentFilter() {
+        if (this.currentFilter === 'all') return;
         
+        this.filteredRepos = this.filteredRepos.filter(repo => {
+            const language = (repo.language || '').toLowerCase();
+            return language === this.currentFilter.toLowerCase();
+        });
+    }
+
+    changeView(mode) {
         // Update active state
-        this.elements.viewButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+        this.elements.viewModes.forEach(m => m.classList.remove('active'));
+        mode.classList.add('active');
         
-        this.currentView = view;
+        this.currentView = mode.dataset.view;
         this.renderProjects();
     }
 
@@ -355,8 +635,43 @@ class GitHubPortfolio {
                 this.filteredRepos.sort((a, b) => a.name.localeCompare(b.name));
                 break;
         }
+    }
+
+    updateStats() {
+        const stats = {
+            projects: this.repos.length,
+            stars: this.repos.reduce((acc, repo) => acc + repo.stargazers_count, 0),
+            forks: this.repos.reduce((acc, repo) => acc + repo.forks_count, 0),
+            contributors: Math.floor(this.repos.length * 2.5) // Estimate
+        };
         
-        this.renderProjects();
+        // Animate counters
+        const statElements = document.querySelectorAll('.stat-value[data-count]');
+        statElements[0]?.setAttribute('data-count', stats.projects);
+        statElements[1]?.setAttribute('data-count', stats.stars);
+        statElements[2]?.setAttribute('data-count', stats.forks);
+        statElements[3]?.setAttribute('data-count', stats.contributors);
+        
+        statElements.forEach(element => {
+            this.animateCounter(element, parseInt(element.getAttribute('data-count')));
+        });
+    }
+
+    animateCounter(element, target) {
+        const duration = 2000;
+        const start = 0;
+        const increment = target / (duration / 16);
+        let current = start;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                element.textContent = target.toLocaleString();
+                clearInterval(timer);
+            } else {
+                element.textContent = Math.floor(current).toLocaleString();
+            }
+        }, 16);
     }
 
     showAnalytics() {
@@ -365,7 +680,7 @@ class GitHubPortfolio {
         
         section.style.display = 'block';
         
-        // Calculate language distribution
+        // Language distribution
         const languages = {};
         this.repos.forEach(repo => {
             if (repo.language) {
@@ -373,42 +688,63 @@ class GitHubPortfolio {
             }
         });
         
-        // Create simple chart
-        const chartContainer = document.getElementById('languageChart');
-        const legendContainer = document.getElementById('chartLegend');
+        // Top projects
+        const topProjects = [...this.repos]
+            .sort((a, b) => b.stargazers_count - a.stargazers_count)
+            .slice(0, 5);
         
-        if (!chartContainer || !legendContainer) return;
+        const topProjectsContainer = document.getElementById('topProjects');
+        if (topProjectsContainer) {
+            topProjectsContainer.innerHTML = topProjects.map((repo, index) => `
+                <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--surface); border-radius: 12px; margin-bottom: 0.5rem;">
+                    <div style="width: 30px; height: 30px; background: var(--gradient-${(index % 3) + 1}); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                        ${index + 1}
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600;">${repo.name}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                            <i class="fas fa-star"></i> ${repo.stargazers_count}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    toggleTheme() {
+        document.body.classList.toggle('light-theme');
+        const isLight = document.body.classList.contains('light-theme');
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
         
-        const total = Object.values(languages).reduce((a, b) => a + b, 0);
-        const colors = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444'];
-        
-        chartContainer.innerHTML = '';
-        legendContainer.innerHTML = '';
-        
-        Object.entries(languages)
-            .sort((a, b) => b[1] - a[1])
-            .forEach(([lang, count], index) => {
-                const percentage = ((count / total) * 100).toFixed(1);
-                const color = colors[index % colors.length];
-                
-                // Add to legend
-                const legendItem = document.createElement('div');
-                legendItem.className = 'legend-item';
-                legendItem.innerHTML = `
-                    <span class="legend-color" style="background: ${color}"></span>
-                    <span>${lang}: ${percentage}%</span>
-                `;
-                legendContainer.appendChild(legendItem);
-            });
+        this.showNotification(`Switched to ${isLight ? 'light' : 'dark'} theme`, 'success');
     }
 
     toggleFAB() {
-        const container = document.querySelector('.fab-container');
-        container.classList.toggle('active');
+        this.elements.floatingMenu.classList.toggle('active');
+        this.elements.fabToggle.classList.toggle('active');
+    }
+
+    handleFABAction(action) {
+        switch(action) {
+            case 'export':
+                this.exportData();
+                break;
+            case 'share':
+                this.sharePortfolio();
+                break;
+            case 'refresh':
+                this.loadRepos();
+                break;
+            case 'top':
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                break;
+        }
+        
+        this.toggleFAB();
     }
 
     exportData() {
-        const data = this.filteredRepos.map(repo => ({
+        const data = this.repos.map(repo => ({
             name: repo.name,
             description: repo.description,
             url: repo.html_url,
@@ -423,110 +759,303 @@ class GitHubPortfolio {
         
         const a = document.createElement('a');
         a.href = url;
-        a.download = `github-portfolio-${this.username}.json`;
+        a.download = `github-portfolio-${this.username || 'data'}.json`;
         a.click();
         
-        this.showToast('Data exported successfully');
+        URL.revokeObjectURL(url);
+        this.showNotification('Portfolio data exported successfully', 'success');
     }
 
-    scrollToTop() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    }
-
-    showLoading() {
-        this.elements.projectsContainer.innerHTML = `
-            <div class="loading-skeleton">
-                <div class="skeleton-card"></div>
-                <div class="skeleton-card"></div>
-                <div class="skeleton-card"></div>
-            </div>
-        `;
-    }
-
-    showToast(message, type = 'success') {
-        const toast = this.elements.toast;
-        const toastMessage = toast.querySelector('.toast-message');
-        const toastIcon = toast.querySelector('i');
+    sharePortfolio() {
+        const url = window.location.href;
+        const text = `Check out ${this.username}'s GitHub Portfolio!`;
         
-        toastMessage.textContent = message;
+        if (navigator.share) {
+            navigator.share({ title: 'GitHub Portfolio', text, url })
+                .then(() => this.showNotification('Shared successfully', 'success'))
+                .catch(() => this.showNotification('Share cancelled', 'warning'));
+        } else {
+            navigator.clipboard.writeText(url)
+                .then(() => this.showNotification('Link copied to clipboard', 'success'))
+                .catch(() => this.showNotification('Failed to copy link', 'error'));
+        }
+    }
+
+    showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
         
-        // Update icon based on type
         const icons = {
-            success: 'fas fa-check-circle',
-            error: 'fas fa-exclamation-circle',
-            warning: 'fas fa-exclamation-triangle'
+            success: 'fa-check-circle',
+            error: 'fa-exclamation-circle',
+            warning: 'fa-exclamation-triangle',
+            info: 'fa-info-circle'
         };
         
-        toastIcon.className = icons[type] || icons.success;
+        notification.innerHTML = `
+            <i class="fas ${icons[type]} notification-icon"></i>
+            <div class="notification-content">
+                <div class="notification-title">${type.charAt(0).toUpperCase() + type.slice(1)}</div>
+                <div class="notification-message">${message}</div>
+            </div>
+        `;
         
-        toast.classList.add('show');
+        this.elements.notificationContainer.appendChild(notification);
         
+        // Auto remove after 5 seconds
         setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3000);
+            notification.style.animation = 'slide-out 0.3s ease';
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 5000);
+    }
+
+    handleScroll() {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 100) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    }
+
+    loadSampleUser() {
+        this.elements.githubUsername.value = 'torvalds';
+        this.loadRepos();
     }
 
     loadSampleData() {
         this.repos = [
             {
-                name: 'awesome-react-app',
-                description: 'A modern React application with Redux and TypeScript',
-                html_url: '#',
-                homepage: '#',
-                language: 'TypeScript',
-                stargazers_count: 42,
-                forks_count: 12,
-                created_at: '2023-01-15',
-                updated_at: '2024-01-10',
-                image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800'
+                name: 'linux',
+                description: 'Linux kernel source tree',
+                html_url: 'https://github.com/torvalds/linux',
+                homepage: 'https://kernel.org',
+                language: 'C',
+                stargazers_count: 150000,
+                forks_count: 45000,
+                watchers_count: 150000,
+                open_issues_count: 500,
+                created_at: '2011-09-04',
+                updated_at: '2024-01-15',
+                imageUrl: 'https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=800'
             },
             {
-                name: 'python-ml-toolkit',
-                description: 'Machine learning toolkit with TensorFlow and scikit-learn',
-                html_url: '#',
-                homepage: '#',
+                name: 'react',
+                description: 'A declarative, efficient, and flexible JavaScript library for building user interfaces',
+                html_url: 'https://github.com/facebook/react',
+                homepage: 'https://reactjs.org',
+                language: 'JavaScript',
+                stargazers_count: 200000,
+                forks_count: 42000,
+                watchers_count: 200000,
+                open_issues_count: 1200,
+                created_at: '2013-05-24',
+                updated_at: '2024-01-15',
+                imageUrl: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800'
+            },
+            {
+                name: 'tensorflow',
+                description: 'An Open Source Machine Learning Framework for Everyone',
+                html_url: 'https://github.com/tensorflow/tensorflow',
+                homepage: 'https://tensorflow.org',
                 language: 'Python',
-                stargazers_count: 128,
-                forks_count: 45,
-                created_at: '2023-03-20',
-                updated_at: '2024-01-08',
-                image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800'
-            },
-            {
-                name: 'vue-dashboard',
-                description: 'Beautiful admin dashboard built with Vue 3 and Tailwind CSS',
-                html_url: '#',
-                homepage: '#',
-                language: 'Vue',
-                stargazers_count: 89,
-                forks_count: 23,
-                created_at: '2023-06-10',
-                updated_at: '2024-01-05',
-                image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800'
+                stargazers_count: 175000,
+                forks_count: 88000,
+                watchers_count: 175000,
+                open_issues_count: 2000,
+                created_at: '2015-11-07',
+                updated_at: '2024-01-15',
+                imageUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800'
             }
         ];
         
         this.filteredRepos = [...this.repos];
-        this.updateStats();
         this.renderProjects();
-    }
-
-    initializeApp() {
-        // Check for saved username
-        const savedUsername = localStorage.getItem('githubUsername');
-        if (savedUsername) {
-            this.elements.githubUsername.value = savedUsername;
-            this.fetchRepos();
-        } else {
-            this.loadSampleData();
-        }
+        this.updateStats();
+        this.showAnalytics();
     }
 }
 
-// Initialize app when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    new GitHubPortfolio();
+// DOM Elements (moved inside function for safety)
+let appsContainer, searchInput, filterButtons, githubUsernameInput, fetchReposButton;
+
+// Initialize the app
+function initApp() {
+    // Query DOM elements after DOMContentLoaded
+    appsContainer = document.getElementById('appsContainer');
+    searchInput = document.getElementById('searchInput');
+    filterButtons = document.querySelectorAll('.filter-btn');
+    githubUsernameInput = document.getElementById('githubUsername');
+    fetchReposButton = document.getElementById('fetchRepos');
+
+    // Only proceed if all required elements exist
+    if (
+        appsContainer &&
+        searchInput &&
+        filterButtons.length > 0 &&
+        githubUsernameInput &&
+        fetchReposButton
+    ) {
+        fetchGitHubRepos('MangalNathYadav');
+        setupEventListeners();
+    }
+}
+
+// Fetch GitHub repositories
+async function fetchGitHubRepos(username) {
+    if (!appsContainer) return;
+    appsContainer.innerHTML = `
+        <div class="loading">
+            <div class="spinner"></div>
+        </div>
+    `;
+    try {
+        const response = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`);
+        if (!response.ok) throw new Error('GitHub API request failed');
+        const repos = await response.json();
+        const filteredRepos = repos.filter(repo => !repo.fork && repo.description);
+        if (filteredRepos.length === 0) throw new Error('No repositories found');
+        renderApps(filteredRepos);
+    } catch (error) {
+        console.error('Error fetching GitHub repos:', error);
+        if (!appsContainer) return;
+        appsContainer.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h2>Unable to Load GitHub Projects</h2>
+                <p>We encountered an issue loading projects from GitHub. Showing sample projects instead.</p>
+                <p>Error: ${error.message}</p>
+            </div>
+        `;
+        renderApps(fallbackData);
+    }
+}
+
+// Render apps to the DOM with staggered animation
+function renderApps(apps) {
+    if (!appsContainer) return;
+    appsContainer.innerHTML = '';
+    if (apps.length === 0) {
+        appsContainer.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-folder-open"></i>
+                <h2>No Projects Found</h2>
+                <p>Try adjusting your search or filter to find what you're looking for.</p>
+            </div>
+        `;
+        return;
+    }
+    apps.forEach((app, idx) => {
+        const appCard = document.createElement('div');
+        appCard.className = 'app-card';
+        appCard.style.animationDelay = `${idx * 0.08}s`;
+        // ...existing code...
+        const imageUrl = app.image || `https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80`;
+        const date = formatDate(app.created_at);
+        appCard.innerHTML = `
+            <div class="app-image">
+                <img src="${imageUrl}" alt="${app.name}">
+                ${app.language ? `<span class="app-badge">${app.language}</span>` : ''}
+            </div>
+            <div class="app-content">
+                <h3>${app.name}</h3>
+                <p>${app.description || 'No description available.'}</p>
+                <div class="app-stats">
+                    <div class="app-stat">
+                        <i class="fas fa-calendar"></i> ${date}
+                    </div>
+                    <div class="app-stat">
+                        <i class="fas fa-star"></i> ${app.stargazers_count || 0}
+                    </div>
+                    <div class="app-stat">
+                        <i class="fas fa-code-branch"></i> ${app.forks_count || 0}
+                    </div>
+                </div>
+                <div class="app-links">
+                    <a href="${app.homepage || app.html_url}" target="_blank" class="app-link primary">
+                        <i class="fas fa-external-link-alt"></i> Live Demo
+                    </a>
+                    <a href="${app.html_url}" target="_blank" class="app-link secondary">
+                        <i class="fab fa-github"></i> Source Code
+                    </a>
+                </div>
+            </div>
+        `;
+        appsContainer.appendChild(appCard);
+    });
+    appsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Filter apps based on search and category
+function filterApps() {
+    if (!searchInput || !appsContainer) return;
+    const searchTerm = searchInput.value.toLowerCase();
+    const activeFilterBtn = document.querySelector('.filter-btn.active');
+    const activeFilter = activeFilterBtn ? activeFilterBtn.dataset.filter : 'all';
+    const appCards = document.querySelectorAll('.app-card');
+    appCards.forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        const description = card.querySelector('p').textContent.toLowerCase();
+        const language = card.querySelector('.app-badge')?.textContent.toLowerCase() || '';
+        const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+        const matchesCategory = activeFilter === 'all' || language.includes(activeFilter);
+        card.style.display = (matchesSearch && matchesCategory) ? 'flex' : 'none';
+    });
+    const visibleCards = Array.from(appCards).filter(card => card.style.display !== 'none');
+    if (visibleCards.length === 0) {
+        appsContainer.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-folder-open"></i>
+                <h2>No Projects Found</h2>
+                <p>Try adjusting your search or filter to find what you're looking for.</p>
+            </div>
+        `;
+    }
+}
+
+// Set up event listeners
+function setupEventListeners() {
+    if (!searchInput || !filterButtons || !githubUsernameInput || !fetchReposButton) return;
+    // Search input
+    searchInput.addEventListener('input', filterApps);
+    // Filter buttons
+    filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            filterApps();
+        });
+    });
+    // Fetch GitHub repos button
+    fetchReposButton.addEventListener('click', () => {
+        const username = githubUsernameInput.value.trim();
+        if (username) fetchGitHubRepos(username);
+    });
+    // Allow pressing Enter in the username field
+    githubUsernameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const username = githubUsernameInput.value.trim();
+            if (username) fetchGitHubRepos(username);
+        }
+    });
+}
+
+// Initialize app
+document.addEventListener('DOMContentLoaded', initApp);
+
+// Add smooth page visibility handling
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        // Pause animations when page is hidden
+        document.querySelectorAll('.floating, .orb, .particle').forEach(el => {
+            el.style.animationPlayState = 'paused';
+        });
+    } else {
+        // Resume animations when page is visible
+        document.querySelectorAll('.floating, .orb, .particle').forEach(el => {
+            el.style.animationPlayState = 'running';
+        });
+    }
 });
