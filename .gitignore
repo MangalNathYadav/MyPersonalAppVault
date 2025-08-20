@@ -7,3 +7,5 @@ auto_focus.py
 agent_state.json
 ai_responses.log
 .agent_state
+dev_logs.md
+agent.py
