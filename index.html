@@ -5,418 +5,1247 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GitHub Portfolio 3D | Next-Gen Developer Showcase</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* ============================================
+           ULTRA MODERN 3D CSS
+           ============================================ */
+        
+        :root {
+            --primary: #6366f1;
+            --primary-rgb: 99, 102, 241;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #13131a;
+            --bg-tertiary: #1a1a24;
+            --surface: rgba(255, 255, 255, 0.03);
+            
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --text-tertiary: #71717a;
+            
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-rainbow: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96e6a1, #ffd93d);
+            
+            --shadow-3d: 0 50px 100px rgba(0, 0, 0, 0.5);
+            --glow: 0 0 30px rgba(99, 102, 241, 0.5);
+            
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --spring: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        body.light-theme {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --text-primary: #1a1a24;
+            --text-secondary: #495057;
+            --text-tertiary: #6c757d;
+            --surface: rgba(0, 0, 0, 0.03);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+            transition: background 0.3s ease;
+        }
+
+        /* Preloader */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .preloader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .cube-loader {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotate-cube 2s infinite linear;
+        }
+
+        @keyframes rotate-cube {
+            0% { transform: rotateX(0) rotateY(0); }
+            100% { transform: rotateX(360deg) rotateY(360deg); }
+        }
+
+        .cube-face {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 2px solid var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .cube-face:nth-child(1) { transform: translateZ(30px); }
+        .cube-face:nth-child(2) { transform: rotateY(90deg) translateZ(30px); }
+        .cube-face:nth-child(3) { transform: rotateY(180deg) translateZ(30px); }
+        .cube-face:nth-child(4) { transform: rotateY(-90deg) translateZ(30px); }
+        .cube-face:nth-child(5) { transform: rotateX(90deg) translateZ(30px); }
+        .cube-face:nth-child(6) { transform: rotateX(-90deg) translateZ(30px); }
+
+        /* Background */
+        .bg-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background: linear-gradient(45deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            overflow: hidden;
+        }
+
+        .bg-animation::before,
+        .bg-animation::after {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.1;
+            animation: float-orb 20s infinite ease-in-out;
+        }
+
+        .bg-animation::before {
+            background: var(--gradient-1);
+            top: -200px;
+            left: -200px;
+        }
+
+        .bg-animation::after {
+            background: var(--gradient-2);
+            bottom: -200px;
+            right: -200px;
+            animation-delay: 10s;
+        }
+
+        @keyframes float-orb {
+            0%, 100% { transform: translate(0, 0); }
+            33% { transform: translate(30px, -30px); }
+            66% { transform: translate(-20px, 20px); }
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+            color: var(--primary);
+            animation: rotate-logo 3s infinite linear;
+        }
+
+        @keyframes rotate-logo {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .theme-toggle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(180deg);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 2rem 2rem;
+            position: relative;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-rainbow);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% auto;
+            animation: gradient-shift 3s ease infinite;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            animation: fade-up 1s ease;
+        }
+
+        @keyframes fade-up {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cards 3D */
+        .floating-cards {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin: 3rem 0;
+            perspective: 1000px;
+        }
+
+        .card-3d {
+            width: 250px;
+            height: 350px;
+            background: var(--gradient-1);
+            border-radius: 20px;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            animation: float-card 3s ease-in-out infinite;
+            cursor: pointer;
+        }
+
+        .card-3d:nth-child(2) {
+            background: var(--gradient-2);
+            animation-delay: 1s;
+        }
+
+        .card-3d:nth-child(3) {
+            background: var(--gradient-3);
+            animation-delay: 2s;
+        }
+
+        @keyframes float-card {
+            0%, 100% { transform: translateY(0) rotateX(0) rotateY(0); }
+            50% { transform: translateY(-20px) rotateX(5deg) rotateY(5deg); }
+        }
+
+        .card-3d:hover {
+            transform: rotateY(180deg);
+        }
+
+        /* Input Section */
+        .input-section {
+            padding: 4rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: var(--shadow-3d);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-3d {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            background: var(--bg-secondary);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .input-3d:focus {
+            outline: none;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-3d {
+            padding: 1rem 2rem;
+            background: var(--gradient-1);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-3d::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-3d:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-3d:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Controls */
+        .controls {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            background: var(--bg-secondary);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: var(--glow);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+        }
+
+        .filter-pills {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .pill {
+            padding: 0.5rem 1rem;
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .pill:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .pill.active {
+            background: var(--gradient-1);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Projects Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .project-card {
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: var(--transition);
+            transform-style: preserve-3d;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            transform: perspective(1000px) rotateX(5deg) translateY(-10px);
+            box-shadow: 0 30px 60px rgba(99, 102, 241, 0.3);
+        }
+
+        .project-image {
+            height: 200px;
+            background: var(--gradient-1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s;
+        }
+
+        .project-card:hover .project-image img {
+            transform: scale(1.1);
+        }
+
+        .project-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .project-content {
+            padding: 1.5rem;
+        }
+
+        .project-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .project-stats {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .stat-item i {
+            color: var(--primary);
+        }
+
+        .project-links {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .project-link {
+            flex: 1;
+            padding: 0.5rem;
+            text-align: center;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .project-link:hover {
+            background: var(--gradient-1);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Loading State */
+        .loading-container {
+            text-align: center;
+            padding: 4rem;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 2rem;
+            border: 3px solid var(--surface);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Stats */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            padding: 2rem;
+            max-width: 1000px;
+            margin: 2rem auto;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-tertiary);
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-1);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            transition: var(--transition);
+            z-index: 100;
+        }
+
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-secondary);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 4rem 2rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 4rem;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+        }
+
+        .heart {
+            color: var(--danger);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 3rem;
+            }
+            
+            .floating-cards {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Utilities */
+        .hidden {
+            display: none !important;
+        }
+    </style>
 </head>
 <body>
     <!-- Preloader -->
     <div class="preloader" id="preloader">
-        <div class="preloader-content">
-            <div class="cube-loader">
-                <div class="cube-face"></div>
-                <div class="cube-face"></div>
-                <div class="cube-face"></div>
-                <div class="cube-face"></div>
-                <div class="cube-face"></div>
-                <div class="cube-face"></div>
-            </div>
-            <p class="loading-text">Initializing Portfolio</p>
+        <div class="cube-loader">
+            <div class="cube-face"></div>
+            <div class="cube-face"></div>
+            <div class="cube-face"></div>
+            <div class="cube-face"></div>
+            <div class="cube-face"></div>
+            <div class="cube-face"></div>
         </div>
     </div>
 
-    <!-- 3D Background -->
-    <div class="background-3d">
-        <canvas id="canvas3d"></canvas>
-        <div class="gradient-orbs">
-            <div class="orb orb-1"></div>
-            <div class="orb orb-2"></div>
-            <div class="orb orb-3"></div>
-        </div>
-    </div>
+    <!-- Background Animation -->
+    <div class="bg-animation"></div>
 
-    <!-- Advanced Cursor -->
-    <div class="cursor">
-        <div class="cursor-ball"></div>
-        <div class="cursor-ring"></div>
-    </div>
-
-    <!-- Navigation Bar -->
-    <nav class="navbar glass-nav">
+    <!-- Navigation -->
+    <nav class="navbar">
         <div class="nav-container">
-            <div class="nav-logo">
-                <div class="logo-3d">
-                    <i class="fab fa-github"></i>
-                </div>
-                <span class="logo-text">Portfolio<span class="accent">3D</span></span>
+            <div class="logo">
+                <i class="fab fa-github"></i>
+                <span>Portfolio3D</span>
             </div>
-            
-            <div class="nav-menu">
-                <button class="nav-item" data-section="home">
-                    <i class="fas fa-home"></i>
-                    <span>Home</span>
-                </button>
-                <button class="nav-item" data-section="projects">
-                    <i class="fas fa-code"></i>
-                    <span>Projects</span>
-                </button>
-                <button class="nav-item" data-section="analytics">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Analytics</span>
-                </button>
-                <button class="nav-item" data-section="about">
-                    <i class="fas fa-user"></i>
-                    <span>About</span>
-                </button>
-            </div>
-
-            <div class="nav-actions">
-                <button class="theme-switch" id="themeSwitch">
-                    <div class="switch-handle">
-                        <i class="fas fa-sun"></i>
-                        <i class="fas fa-moon"></i>
-                    </div>
-                </button>
-            </div>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon" id="themeIcon"></i>
+            </button>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-section" id="heroSection">
-        <div class="hero-container">
-            <div class="hero-content">
-                <div class="hero-badge floating">
-                    <span class="badge-text">Developer Portfolio</span>
-                    <div class="badge-glow"></div>
-                </div>
-                
-                <h1 class="hero-title">
-                    <span class="title-word">GitHub</span>
-                    <span class="title-word gradient-text">Portfolio</span>
-                    <span class="title-word">Showcase</span>
-                </h1>
-                
-                <p class="hero-description">
-                    Experience your code in a whole new dimension with 3D visualizations and modern interactions
-                </p>
-
-                <div class="hero-stats" id="heroStats">
-                    <div class="stat-box-3d" data-tilt>
-                        <div class="stat-inner">
-                            <i class="fas fa-folder"></i>
-                            <div class="stat-value" data-count="0">0</div>
-                            <div class="stat-label">Projects</div>
-                        </div>
-                    </div>
-                    <div class="stat-box-3d" data-tilt>
-                        <div class="stat-inner">
-                            <i class="fas fa-star"></i>
-                            <div class="stat-value" data-count="0">0</div>
-                            <div class="stat-label">Stars</div>
-                        </div>
-                    </div>
-                    <div class="stat-box-3d" data-tilt>
-                        <div class="stat-inner">
-                            <i class="fas fa-code-branch"></i>
-                            <div class="stat-value" data-count="0">0</div>
-                            <div class="stat-label">Forks</div>
-                        </div>
-                    </div>
-                    <div class="stat-box-3d" data-tilt>
-                        <div class="stat-inner">
-                            <i class="fas fa-users"></i>
-                            <div class="stat-value" data-count="0">0</div>
-                            <div class="stat-label">Contributors</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="hero-3d-model">
-                <div class="floating-cards">
-                    <div class="float-card card-1" data-depth="0.2"></div>
-                    <div class="float-card card-2" data-depth="0.4"></div>
-                    <div class="float-card card-3" data-depth="0.6"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="scroll-indicator">
-            <div class="mouse-3d">
-                <div class="wheel"></div>
-            </div>
-            <span>Scroll to explore</span>
-        </div>
-    </section>
-
-    <!-- Connection Section -->
-    <section class="connection-section glass-morph">
-        <div class="container">
-            <div class="connection-header">
-                <h2 class="section-title">
-                    <span class="title-icon"><i class="fab fa-github"></i></span>
-                    Connect Your GitHub
-                </h2>
-                <div class="connection-status" id="connectionStatus">
-                    <div class="status-dot"></div>
-                    <span>Ready to connect</span>
-                </div>
-            </div>
-
-            <div class="connection-form">
-                <div class="input-3d-wrapper">
-                    <input 
-                        type="text" 
-                        id="githubUsername" 
-                        class="input-3d" 
-                        placeholder="Enter GitHub username"
-                        value="torvalds"
-                    >
-                    <div class="input-border"></div>
-                    <div class="input-glow"></div>
-                </div>
-                
-                <button class="btn-3d" id="loadReposBtn">
-                    <span class="btn-text">Load Portfolio</span>
-                    <span class="btn-gradient"></span>
-                    <span class="btn-particles">
-                        <i></i><i></i><i></i><i></i><i></i>
-                    </span>
-                </button>
-            </div>
-
-            <div class="quick-links">
-                <button class="quick-link" data-username="torvalds">
-                    <img src="https://github.com/torvalds.png" alt="Linus Torvalds">
-                    <span>Linus Torvalds</span>
-                </button>
-                <button class="quick-link" data-username="gaearon">
-                    <img src="https://github.com/gaearon.png" alt="Dan Abramov">
-                    <span>Dan Abramov</span>
-                </button>
-                <button class="quick-link" data-username="yyx990803">
-                    <img src="https://github.com/yyx990803.png" alt="Evan You">
-                    <span>Evan You</span>
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Controls Section -->
-    <section class="controls-section" id="controlsSection">
-        <div class="container">
-            <div class="controls-wrapper">
-                <!-- Search Box -->
-                <div class="search-3d">
-                    <div class="search-inner">
-                        <i class="fas fa-search"></i>
-                        <input 
-                            type="text" 
-                            id="searchInput" 
-                            placeholder="Search projects..."
-                            class="search-input-3d"
-                        >
-                        <div class="search-suggestions" id="searchSuggestions"></div>
-                    </div>
-                    <div class="search-glow"></div>
-                </div>
-
-                <!-- Filters -->
-                <div class="filter-container">
-                    <div class="filter-group">
-                        <label class="filter-label">Language</label>
-                        <div class="filter-pills">
-                            <button class="pill-3d active" data-filter="all">
-                                <span>All</span>
-                                <div class="pill-glow"></div>
-                            </button>
-                            <button class="pill-3d" data-filter="javascript">
-                                <span>JavaScript</span>
-                                <div class="pill-glow"></div>
-                            </button>
-                            <button class="pill-3d" data-filter="typescript">
-                                <span>TypeScript</span>
-                                <div class="pill-glow"></div>
-                            </button>
-                            <button class="pill-3d" data-filter="python">
-                                <span>Python</span>
-                                <div class="pill-glow"></div>
-                            </button>
-                            <button class="pill-3d" data-filter="java">
-                                <span>Java</span>
-                                <div class="pill-glow"></div>
-                            </button>
-                            <button class="pill-3d" data-filter="go">
-                                <span>Go</span>
-                                <div class="pill-glow"></div>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="filter-group">
-                        <label class="filter-label">Sort By</label>
-                        <div class="select-3d">
-                            <select id="sortSelect" class="select-input">
-                                <option value="stars">Most Stars</option>
-                                <option value="updated">Recently Updated</option>
-                                <option value="created">Recently Created</option>
-                                <option value="forks">Most Forks</option>
-                                <option value="name">Alphabetical</option>
-                            </select>
-                            <div class="select-arrow"><i class="fas fa-chevron-down"></i></div>
-                        </div>
-                    </div>
-
-                    <div class="filter-group">
-                        <label class="filter-label">View Mode</label>
-                        <div class="view-switcher">
-                            <button class="view-mode active" data-view="cards">
-                                <i class="fas fa-th-large"></i>
-                            </button>
-                            <button class="view-mode" data-view="list">
-                                <i class="fas fa-list"></i>
-                            </button>
-                            <button class="view-mode" data-view="3d">
-                                <i class="fas fa-cube"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Projects Section -->
-    <section class="projects-section" id="projectsSection">
-        <div class="container">
-            <div class="projects-header">
-                <h2 class="section-title">
-                    <span>Repository Collection</span>
-                </h2>
-                <div class="project-count">
-                    <span id="projectCount">0</span> projects found
-                </div>
-            </div>
-
-            <div class="projects-container" id="projectsContainer">
-                <!-- Projects will be loaded here -->
-                <div class="loading-container">
-                    <div class="dna-loader">
-                        <div class="dna-strand"></div>
-                        <div class="dna-strand"></div>
-                    </div>
-                    <p>Loading repositories...</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Analytics Section -->
-    <section class="analytics-section" id="analyticsSection">
-        <div class="container">
-            <h2 class="section-title">Portfolio Analytics</h2>
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">GitHub Portfolio</h1>
+            <p class="hero-subtitle">Experience your code in 3D</p>
             
-            <div class="analytics-grid">
-                <div class="chart-container glass-morph">
-                    <h3>Language Distribution</h3>
-                    <div class="chart-3d" id="languageChart">
-                        <canvas id="langCanvas"></canvas>
-                    </div>
-                </div>
-                
-                <div class="chart-container glass-morph">
-                    <h3>Activity Timeline</h3>
-                    <div class="timeline-3d" id="timeline">
-                        <div class="timeline-line"></div>
-                        <div class="timeline-items"></div>
-                    </div>
-                </div>
-                
-                <div class="chart-container glass-morph">
-                    <h3>Top Projects</h3>
-                    <div class="top-projects" id="topProjects"></div>
-                </div>
+            <div class="floating-cards">
+                <div class="card-3d"></div>
+                <div class="card-3d"></div>
+                <div class="card-3d"></div>
             </div>
         </div>
     </section>
+
+    <!-- Input Section -->
+    <section class="input-section">
+        <div class="glass-panel">
+            <h2 class="section-title">
+                <i class="fab fa-github"></i> Connect Your GitHub
+            </h2>
+            
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="githubUsername" 
+                    class="input-3d" 
+                    placeholder="Enter GitHub username"
+                    value="torvalds"
+                >
+                <button class="btn-3d" id="loadBtn">
+                    Load Portfolio
+                </button>
+            </div>
+
+            <!-- Quick Links -->
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <button class="pill" onclick="loadUser('torvalds')">Linus Torvalds</button>
+                <button class="pill" onclick="loadUser('gaearon')">Dan Abramov</button>
+                <button class="pill" onclick="loadUser('yyx990803')">Evan You</button>
+                <button class="pill" onclick="loadUser('addyosmani')">Addy Osmani</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <div class="stats-container" id="statsContainer" style="display: none;">
+        <div class="stat-card">
+            <div class="stat-number" id="totalRepos">0</div>
+            <div class="stat-label">Repositories</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="totalStars">0</div>
+            <div class="stat-label">Total Stars</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="totalForks">0</div>
+            <div class="stat-label">Total Forks</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="totalLanguages">0</div>
+            <div class="stat-label">Languages</div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls" id="controlsSection" style="display: none;">
+        <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input 
+                type="text" 
+                id="searchInput" 
+                class="search-input" 
+                placeholder="Search projects..."
+            >
+        </div>
+        
+        <div class="filter-pills" id="filterPills">
+            <button class="pill active" data-filter="all">All</button>
+            <button class="pill" data-filter="javascript">JavaScript</button>
+            <button class="pill" data-filter="python">Python</button>
+            <button class="pill" data-filter="java">Java</button>
+            <button class="pill" data-filter="typescript">TypeScript</button>
+            <button class="pill" data-filter="go">Go</button>
+            <button class="pill" data-filter="rust">Rust</button>
+        </div>
+
+        <select id="sortSelect" class="input-3d" style="width: 200px;">
+            <option value="stars">Most Stars</option>
+            <option value="forks">Most Forks</option>
+            <option value="updated">Recently Updated</option>
+            <option value="created">Recently Created</option>
+            <option value="name">Name (A-Z)</option>
+        </select>
+    </div>
+
+    <!-- Projects Grid -->
+    <div class="projects-grid" id="projectsGrid">
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <p>Ready to load repositories...</p>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button class="fab" id="scrollTop">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
 
     <!-- Footer -->
-    <footer class="footer-3d">
-        <div class="footer-content">
-            <div class="footer-waves">
-                <svg viewBox="0 0 1440 320">
-                    <path fill="currentColor" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,133.3C960,128,1056,96,1152,90.7C1248,85,1344,107,1392,117.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-                </svg>
-            </div>
-            
-            <div class="footer-main">
-                <div class="footer-brand">
-                    <h3>Portfolio<span class="accent">3D</span></h3>
-                    <p>Next-generation GitHub portfolio viewer</p>
-                </div>
-                
-                <div class="footer-links">
-                    <a href="#" class="social-3d">
-                        <i class="fab fa-github"></i>
-                    </a>
-                    <a href="#" class="social-3d">
-                        <i class="fab fa-linkedin"></i>
-                    </a>
-                    <a href="#" class="social-3d">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a href="#" class="social-3d">
-                        <i class="fab fa-codepen"></i>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>© 2024 Portfolio3D | Made with <i class="fas fa-heart pulse-heart"></i> and JavaScript</p>
-            </div>
-        </div>
+    <footer class="footer">
+        <p class="footer-text">
+            Made with <i class="fas fa-heart heart"></i> using JavaScript
+        </p>
     </footer>
 
-    <!-- Floating Menu -->
-    <div class="floating-menu" id="floatingMenu">
-        <button class="fab-3d" id="fabToggle">
-            <i class="fas fa-plus"></i>
-        </button>
-        <div class="fab-options">
-            <button class="fab-option" data-action="export">
-                <i class="fas fa-download"></i>
-                <span>Export</span>
-            </button>
-            <button class="fab-option" data-action="share">
-                <i class="fas fa-share"></i>
-                <span>Share</span>
-            </button>
-            <button class="fab-option" data-action="refresh">
-                <i class="fas fa-sync"></i>
-                <span>Refresh</span>
-            </button>
-            <button class="fab-option" data-action="top">
-                <i class="fas fa-arrow-up"></i>
-                <span>Top</span>
-            </button>
-        </div>
-    </div>
+    <script>
+        // ============================================
+        // ULTRA MODERN 3D PORTFOLIO APP
+        // ============================================
+        
+        class GitHubPortfolio3D {
+            constructor() {
+                this.repos = [];
+                this.filteredRepos = [];
+                this.currentFilter = 'all';
+                this.init();
+            }
 
-    <!-- Notification System -->
-    <div class="notification-container" id="notificationContainer"></div>
+            init() {
+                this.setupElements();
+                this.setupEventListeners();
+                this.hidePreloader();
+                this.initializeTheme();
+            }
 
-    <!-- Modal -->
-    <div class="modal-3d" id="projectModal">
-        <div class="modal-backdrop"></div>
-        <div class="modal-content">
-            <button class="modal-close" id="modalClose">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="modal-body" id="modalBody"></div>
-        </div>
-    </div>
+            setupElements() {
+                this.elements = {
+                    preloader: document.getElementById('preloader'),
+                    projectsGrid: document.getElementById('projectsGrid'),
+                    githubUsername: document.getElementById('githubUsername'),
+                    loadBtn: document.getElementById('loadBtn'),
+                    searchInput: document.getElementById('searchInput'),
+                    filterPills: document.getElementById('filterPills'),
+                    sortSelect: document.getElementById('sortSelect'),
+                    themeToggle: document.getElementById('themeToggle'),
+                    themeIcon: document.getElementById('themeIcon'),
+                    toast: document.getElementById('toast'),
+                    scrollTop: document.getElementById('scrollTop'),
+                    statsContainer: document.getElementById('statsContainer'),
+                    controlsSection: document.getElementById('controlsSection'),
+                    totalRepos: document.getElementById('totalRepos'),
+                    totalStars: document.getElementById('totalStars'),
+                    totalForks: document.getElementById('totalForks'),
+                    totalLanguages: document.getElementById('totalLanguages')
+                };
+            }
 
-    <script src="app.js"></script>
+            setupEventListeners() {
+                // Load button
+                this.elements.loadBtn.addEventListener('click', () => this.loadRepos());
+                
+                // Enter key on input
+                this.elements.githubUsername.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.loadRepos();
+                });
+
+                // Search
+                this.elements.searchInput?.addEventListener('input', (e) => {
+                    this.handleSearch(e.target.value);
+                });
+
+                // Filter pills
+                this.elements.filterPills?.querySelectorAll('.pill').forEach(pill => {
+                    pill.addEventListener('click', () => this.handleFilter(pill));
+                });
+
+                // Sort
+                this.elements.sortSelect?.addEventListener('change', () => this.sortRepos());
+
+                // Theme toggle
+                this.elements.themeToggle.addEventListener('click', () => this.toggleTheme());
+
+                // Scroll to top
+                this.elements.scrollTop.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+
+                // Show/hide scroll button
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 300) {
+                        this.elements.scrollTop.style.transform = 'scale(1)';
+                    } else {
+                        this.elements.scrollTop.style.transform = 'scale(0)';
+                    }
+                });
+            }
+
+            hidePreloader() {
+                setTimeout(() => {
+                    this.elements.preloader.classList.add('hidden');
+                }, 1500);
+            }
+
+            initializeTheme() {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'light') {
+                    document.body.classList.add('light-theme');
+                    this.elements.themeIcon.className = 'fas fa-sun';
+                }
+            }
+
+            toggleTheme() {
+                document.body.classList.toggle('light-theme');
+                const isLight = document.body.classList.contains('light-theme');
+                this.elements.themeIcon.className = isLight ? 'fas fa-sun' : 'fas fa-moon';
+                localStorage.setItem('theme', isLight ? 'light' : 'dark');
+                this.showToast(`Switched to ${isLight ? 'light' : 'dark'} theme`);
+            }
+
+            async loadRepos() {
+                const username = this.elements.githubUsername.value.trim();
+                if (!username) {
+                    this.showToast('Please enter a GitHub username');
+                    return;
+                }
+
+                this.showLoading();
+
+                try {
+                    const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=100&sort=updated`);
+                    
+                    if (!response.ok) {
+                        throw new Error('User not found');
+                    }
+
+                    const repos = await response.json();
+                    
+                    if (repos.length === 0) {
+                        this.showToast('No repositories found');
+                        this.loadSampleData();
+                        return;
+                    }
+
+                    this.repos = repos.map((repo, index) => ({
+                        ...repo,
+                        imageUrl: `https://opengraph.githubassets.com/1/${username}/${repo.name}`
+                    }));
+
+                    this.filteredRepos = [...this.repos];
+                    this.sortRepos();
+                    this.renderProjects();
+                    this.updateStats();
+                    this.showControls();
+                    this.showToast(`Loaded ${repos.length} repositories`);
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    this.showToast('Failed to load repositories. Loading sample data...');
+                    this.loadSampleData();
+                }
+            }
+
+            loadSampleData() {
+                this.repos = [
+                    {
+                        name: 'awesome-project',
+                        description: 'An awesome project that does amazing things with modern web technologies',
+                        html_url: 'https://github.com/sample/awesome-project',
+                        homepage: 'https://awesome-project.com',
+                        language: 'JavaScript',
+                        stargazers_count: 1234,
+                        forks_count: 456,
+                        updated_at: '2024-01-15',
+                        imageUrl: 'https://via.placeholder.com/400x200/6366f1/ffffff?text=Awesome+Project'
+                    },
+                    {
+                        name: 'machine-learning-toolkit',
+                        description: 'A comprehensive toolkit for machine learning applications',
+                        html_url: 'https://github.com/sample/ml-toolkit',
+                        homepage: '',
+                        language: 'Python',
+                        stargazers_count: 5678,
+                        forks_count: 890,
+                        updated_at: '2024-01-14',
+                        imageUrl: 'https://via.placeholder.com/400x200/8b5cf6/ffffff?text=ML+Toolkit'
+                    },
+                    {
+                        name: 'react-components',
+                        description: 'Reusable React components for modern web applications',
+                        html_url: 'https://github.com/sample/react-components',
+                        homepage: 'https://react-components.dev',
+                        language: 'TypeScript',
+                        stargazers_count: 2345,
+                        forks_count: 234,
+                        updated_at: '2024-01-13',
+                        imageUrl: 'https://via.placeholder.com/400x200/06b6d4/ffffff?text=React+Components'
+                    }
+                ];
+
+                this.filteredRepos = [...this.repos];
+                this.renderProjects();
+                this.updateStats();
+                this.showControls();
+            }
+
+            showLoading() {
+                this.elements.projectsGrid.innerHTML = `
+                    <div class="loading-container" style="grid-column: 1/-1;">
+                        <div class="spinner"></div>
+                        <p>Loading repositories...</p>
+                    </div>
+                `;
+            }
+
+            renderProjects() {
+                if (this.filteredRepos.length === 0) {
+                    this.elements.projectsGrid.innerHTML = `
+                        <div class="loading-container" style="grid-column: 1/-1;">
+                            <i class="fas fa-folder-open" style="font-size: 3rem; color: var(--text-tertiary);"></i>
+                            <p>No projects found</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                this.elements.projectsGrid.innerHTML = this.filteredRepos.map((repo, index) => `
+                    <div class="project-card" style="animation-delay: ${index * 0.1}s">
+                        <div class="project-image">
+                            <img src="${repo.imageUrl}" alt="${repo.name}" onerror="this.src='https://via.placeholder.com/400x200/6366f1/ffffff?text=${repo.name}'">
+                            ${repo.language ? `<span class="project-badge">${repo.language}</span>` : ''}
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-title">${repo.name}</h3>
+                            <p class="project-description">${repo.description || 'No description available'}</p>
+                            <div class="project-stats">
+                                <span class="stat-item">
+                                    <i class="fas fa-star"></i> ${repo.stargazers_count || 0}
+                                </span>
+                                <span class="stat-item">
+                                    <i class="fas fa-code-branch"></i> ${repo.forks_count || 0}
+                                </span>
+                                <span class="stat-item">
+                                    <i class="fas fa-clock"></i> ${new Date(repo.updated_at).toLocaleDateString()}
+                                </span>
+                            </div>
+                            <div class="project-links">
+                                <a href="${repo.html_url}" target="_blank" class="project-link">
+                                    <i class="fab fa-github"></i> Code
+                                </a>
+                                ${repo.homepage ? `
+                                    <a href="${repo.homepage}" target="_blank" class="project-link">
+                                        <i class="fas fa-external-link-alt"></i> Demo
+                                    </a>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            handleSearch(query) {
+                const searchTerm = query.toLowerCase();
+                
+                if (!searchTerm) {
+                    this.filteredRepos = [...this.repos];
+                } else {
+                    this.filteredRepos = this.repos.filter(repo => 
+                        repo.name.toLowerCase().includes(searchTerm) ||
+                        (repo.description && repo.description.toLowerCase().includes(searchTerm))
+                    );
+                }
+                
+                this.applyFilter();
+                this.sortRepos();
+                this.renderProjects();
+            }
+
+            handleFilter(pill) {
+                // Update active state
+                this.elements.filterPills.querySelectorAll('.pill').forEach(p => {
+                    p.classList.remove('active');
+                });
+                pill.classList.add('active');
+                
+                this.currentFilter = pill.dataset.filter;
+                this.applyFilter();
+                this.renderProjects();
+            }
+
+            applyFilter() {
+                if (this.currentFilter === 'all') {
+                    // Keep current filtered repos (from search)
+                    return;
+                }
+                
+                this.filteredRepos = this.filteredRepos.filter(repo => {
+                    const language = (repo.language || '').toLowerCase();
+                    return language === this.currentFilter.toLowerCase();
+                });
+            }
+
+            sortRepos() {
+                const sortBy = this.elements.sortSelect?.value || 'stars';
+                
+                switch(sortBy) {
+                    case 'stars':
+                        this.filteredRepos.sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0));
+                        break;
+                    case 'forks':
+                        this.filteredRepos.sort((a, b) => (b.forks_count || 0) - (a.forks_count || 0));
+                        break;
+                    case 'updated':
+                        this.filteredRepos.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+                        break;
+                    case 'created':
+                        this.filteredRepos.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                        break;
+                    case 'name':
+                        this.filteredRepos.sort((a, b) => a.name.localeCompare(b.name));
+                        break;
+                }
+            }
+
+            updateStats() {
+                const stats = {
+                    repos: this.repos.length,
+                    stars: this.repos.reduce((sum, repo) => sum + (repo.stargazers_count || 0), 0),
+                    forks: this.repos.reduce((sum, repo) => sum + (repo.forks_count || 0), 0),
+                    languages: [...new Set(this.repos.map(repo => repo.language).filter(Boolean))].length
+                };
+
+                this.animateNumber(this.elements.totalRepos, stats.repos);
+                this.animateNumber(this.elements.totalStars, stats.stars);
+                this.animateNumber(this.elements.totalForks, stats.forks);
+                this.animateNumber(this.elements.totalLanguages, stats.languages);
+                
+                this.elements.statsContainer.style.display = 'grid';
+            }
+
+            animateNumber(element, target) {
+                const duration = 1000;
+                const start = 0;
+                const increment = target / (duration / 16);
+                let current = start;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        element.textContent = target.toLocaleString();
+                        clearInterval(timer);
+                    } else {
+                        element.textContent = Math.floor(current).toLocaleString();
+                    }
+                }, 16);
+            }
+
+            showControls() {
+                this.elements.controlsSection.style.display = 'flex';
+            }
+
+            showToast(message) {
+                this.elements.toast.textContent = message;
+                this.elements.toast.classList.add('show');
+                
+                setTimeout(() => {
+                    this.elements.toast.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        // Global function for quick links
+        function loadUser(username) {
+            document.getElementById('githubUsername').value = username;
+            portfolio.loadRepos();
+        }
+
+        // Initialize app
+        const portfolio = new GitHubPortfolio3D();
+    </script>
 </body>
 </html>
