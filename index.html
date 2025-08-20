@@ -1,70 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>My GitHub Portfolio | Web App Showcase</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path fill='%234361ee' d='M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm0 90c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40z'/><path fill='%23ffffff' d='M50 20v40l25-15-25-15z'/></svg>">
+
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- PWA Support (Optional) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4361ee">
 </head>
 <body>
-    <!-- HTML: index.html -->
     <header>
         <div class="container">
-            <h1><i class="fas fa-folder-tree"></i> My GitHub Portfolio</h1>
-            <p>Showcasing my GitHub projects in one centralized hub</p>
+            <div class="header-content">
+                <h1><i class="fab fa-github"></i> My GitHub Portfolio</h1>
+                <p>Showcasing my open-source journey in one elegant hub</p>
+                <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark/light mode">
+                    <i class="fas fa-sun"></i>
+                </button>
+            </div>
         </div>
     </header>
 
-    <div class="container">
-        <div class="github-setup">
-            <h2><i class="fab fa-github"></i> Load Your GitHub Projects</h2>
-            <p>Enter your GitHub username to fetch and display your repositories. Only public repositories will be shown.</p>
-            
+    <main class="container">
+        <section class="github-setup">
+            <h2><i class="fab fa-github"></i> Fetch Your Projects</h2>
+            <p>Enter your GitHub username to load your public repositories.</p>
+
             <div class="github-input">
-                <input type="text" id="githubUsername" placeholder="Enter GitHub username" value="MangalNathYadav">
+                <input type="text" id="githubUsername" placeholder="e.g., MangalNathYadav" value="MangalNathYadav">
                 <button id="fetchRepos">Load Projects</button>
             </div>
-            
+
             <div class="setup-steps">
                 <p><strong>How it works:</strong></p>
                 <ol>
-                    <li>Enter your GitHub username above</li>
-                    <li>Click "Load Projects" to fetch your repositories</li>
-                    <li>Your projects will be displayed below with filters</li>
-                    <li>Use the search and filter options to find specific projects</li>
+                    <li>Enter your GitHub username</li>
+                    <li>Click "Load Projects"</li>
+                    <li>Explore your apps with filters & search</li>
+                    <li>Enjoy live previews & stats!</li>
                 </ol>
             </div>
-        </div>
+        </section>
 
-        <div class="search-filter">
+        <section class="search-filter">
             <div class="search-box">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Search for a project...">
+                <input type="text" id="searchInput" placeholder="Search by name or description...">
             </div>
-            
+
             <div class="filter-buttons">
-                <button class="filter-btn active" data-filter="all">All Projects</button>
+                <button class="filter-btn active" data-filter="all">All</button>
                 <button class="filter-btn" data-filter="javascript">JavaScript</button>
                 <button class="filter-btn" data-filter="html">HTML</button>
                 <button class="filter-btn" data-filter="css">CSS</button>
                 <button class="filter-btn" data-filter="python">Python</button>
                 <button class="filter-btn" data-filter="java">Java</button>
+                <button class="filter-btn" data-filter="react">React</button>
+                <button class="filter-btn" data-filter="vue">Vue</button>
             </div>
-        </div>
+        </section>
 
-        <div class="apps-grid" id="appsContainer">
+        <section class="apps-grid" id="appsContainer">
             <div class="loading">
                 <div class="spinner"></div>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <footer>
         <div class="container">
-            <p>Created with <i class="fas fa-heart" style="color: var(--danger);"></i> by Your Name | <a href="#" target="_blank">GitHub</a> | <a href="#" target="_blank">Portfolio</a></p>
+            <p>
+                Built with <i class="fas fa-heart" style="color: var(--danger);"></i> by <strong>Mangal Nath Yadav</strong>
+                | <a href="https://github.com/MangalNathYadav" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+                | <a href="#" target="_blank"><i class="fas fa-link"></i> Portfolio</a>
+            </p>
         </div>
     </footer>
+
     <script src="app.js"></script>
 </body>
 </html>

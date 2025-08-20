@@ -1,12 +1,12 @@
-// ...all JS from the <script> block in index.html...
 // DOM Elements
 const appsContainer = document.getElementById('appsContainer');
 const searchInput = document.getElementById('searchInput');
 const filterButtons = document.querySelectorAll('.filter-btn');
 const githubUsernameInput = document.getElementById('githubUsername');
 const fetchReposButton = document.getElementById('fetchRepos');
+const themeToggle = document.getElementById('themeToggle');
 
-// Sample data as fallback
+// Sample fallback data
 const fallbackData = [
     {
         id: 1,
@@ -46,86 +46,104 @@ const fallbackData = [
     }
 ];
 
-// Initialize the app
+// Initialize app
 function initApp() {
-    // Try to fetch GitHub repos on load with the default username
+    // Check system theme
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (prefersDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+    }
+
+    // Load default repos
     fetchGitHubRepos('MangalNathYadav');
+
     setupEventListeners();
 }
 
-// Fetch GitHub repositories
+// Toggle Dark/Light Mode
+function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme');
+    const newTheme = current === 'dark' ? 'light' : 'dark';
+
+    document.documentElement.setAttribute('data-theme', newTheme);
+    themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+
+    localStorage.setItem('theme', newTheme);
+}
+
+// Fetch GitHub Repos
 async function fetchGitHubRepos(username) {
     appsContainer.innerHTML = `
         <div class="loading">
             <div class="spinner"></div>
         </div>
     `;
-    
+
     try {
-        // Try to fetch from GitHub API
         const response = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`);
-        
-        if (!response.ok) {
-            throw new Error('GitHub API request failed');
-        }
-        
+        if (!response.ok) throw new Error('API failed');
+
         const repos = await response.json();
-        
-        // Filter out forks and empty repos
-        const filteredRepos = repos.filter(repo => !repo.fork && repo.description);
-        
-        if (filteredRepos.length === 0) {
-            throw new Error('No repositories found');
-        }
-        
+        const filteredRepos = repos.filter(r => !r.fork && r.description);
+
+        if (filteredRepos.length === 0) throw new Error('No valid repos found');
+
         renderApps(filteredRepos);
     } catch (error) {
-        console.error('Error fetching GitHub repos:', error);
-        
-        // Show error message but use fallback data
+        console.error('Error fetching:', error);
         appsContainer.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-exclamation-triangle"></i>
-                <h2>Unable to Load GitHub Projects</h2>
-                <p>We encountered an issue loading projects from GitHub. Showing sample projects instead.</p>
-                <p>Error: ${error.message}</p>
+                <h2>Failed to Load Projects</h2>
+                <p>We couldn't connect to GitHub. Showing sample projects instead.</p>
+                <small>${error.message}</small>
             </div>
         `;
-        
-        // Use fallback data
         renderApps(fallbackData);
     }
 }
 
-// Render apps to the DOM
+// Render apps with dynamic styling
 function renderApps(apps) {
     appsContainer.innerHTML = '';
-    
+
     if (apps.length === 0) {
         appsContainer.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-folder-open"></i>
                 <h2>No Projects Found</h2>
-                <p>Try adjusting your search or filter to find what you're looking for.</p>
+                <p>Try adjusting your search or filter.</p>
             </div>
         `;
         return;
     }
-    
-    apps.forEach(app => {
+
+    apps.forEach((app, idx) => {
         const appCard = document.createElement('div');
         appCard.className = 'app-card';
-        
-        // Use a default image if none is provided
-        const imageUrl = app.image || `https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80`;
-        
-        // Format the date
+        appCard.style.animationDelay = `${idx * 0.08}s`;
+
         const date = formatDate(app.created_at);
-        
+        const imageUrl = app.image || `https://picsum.photos/seed/${app.id}/800/400`;
+
+        // Language-based gradient color
+        let bgColor = '#4361ee';
+        switch (app.language.toLowerCase()) {
+            case 'javascript': bgColor = '#f0db4f'; break;
+            case 'html': bgColor = '#e34f26'; break;
+            case 'css': bgColor = '#1572b6'; break;
+            case 'python': bgColor = '#3776ab'; break;
+            case 'java': bgColor = '#b07219'; break;
+            case 'react': bgColor = '#61dafb'; break;
+            case 'vue': bgColor = '#42b983'; break;
+            default: bgColor = '#4361ee';
+        }
+
         appCard.innerHTML = `
             <div class="app-image">
-                <img src="${imageUrl}" alt="${app.name}">
-                ${app.language ? `<span class="app-badge">${app.language}</span>` : ''}
+                <img src="${imageUrl}" alt="${app.name}" loading="lazy">
+                ${app.language ? `<span class="app-badge" style="background: ${bgColor};">${app.language}</span>` : ''}
             </div>
             <div class="app-content">
                 <h3>${app.name}</h3>
@@ -151,85 +169,83 @@ function renderApps(apps) {
                 </div>
             </div>
         `;
-        
+
         appsContainer.appendChild(appCard);
     });
+
+    appsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// Format date to readable format
+// Format date
 function formatDate(dateString) {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
 }
 
-// Filter apps based on search and category
+// Debounced search/filter
+let debounceTimer;
 function filterApps() {
-    const searchTerm = searchInput.value.toLowerCase();
-    const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
-    
-    // This is a simplified version - in a real app, you would filter the actual data
-    const appCards = document.querySelectorAll('.app-card');
-    
-    appCards.forEach(card => {
-        const title = card.querySelector('h3').textContent.toLowerCase();
-        const description = card.querySelector('p').textContent.toLowerCase();
-        const language = card.querySelector('.app-badge')?.textContent.toLowerCase() || '';
-        
-        const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
-        const matchesCategory = activeFilter === 'all' || language.includes(activeFilter);
-        
-        if (matchesSearch && matchesCategory) {
-            card.style.display = 'flex';
-        } else {
-            card.style.display = 'none';
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        const searchTerm = searchInput.value.toLowerCase();
+        const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+
+        const appCards = document.querySelectorAll('.app-card');
+        let visibleCount = 0;
+
+        appCards.forEach(card => {
+            const title = card.querySelector('h3').textContent.toLowerCase();
+            const desc = card.querySelector('p').textContent.toLowerCase();
+            const lang = card.querySelector('.app-badge')?.textContent.toLowerCase() || '';
+
+            const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm);
+            const matchesCategory = activeFilter === 'all' || lang.includes(activeFilter);
+
+            if (matchesSearch && matchesCategory) {
+                card.style.display = 'flex';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        if (visibleCount === 0) {
+            appsContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <h2>No Matching Projects</h2>
+                    <p>Try changing your search or filter.</p>
+                </div>
+            `;
         }
-    });
-    
-    // Check if all cards are hidden
-    const visibleCards = Array.from(appCards).filter(card => card.style.display !== 'none');
-    if (visibleCards.length === 0) {
-        appsContainer.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-folder-open"></i>
-                <h2>No Projects Found</h2>
-                <p>Try adjusting your search or filter to find what you're looking for.</p>
-            </div>
-        `;
-    }
+    }, 300);
 }
 
-// Set up event listeners
+// Event Listeners
 function setupEventListeners() {
-    // Search input
     searchInput.addEventListener('input', filterApps);
-    
-    // Filter buttons
-    filterButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
+    themeToggle.addEventListener('click', toggleTheme);
+
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
             filterApps();
         });
     });
-    
-    // Fetch GitHub repos button
+
     fetchReposButton.addEventListener('click', () => {
         const username = githubUsernameInput.value.trim();
-        if (username) {
-            fetchGitHubRepos(username);
-        }
+        if (username) fetchGitHubRepos(username);
     });
-    
-    // Allow pressing Enter in the username field
-    githubUsernameInput.addEventListener('keypress', (e) => {
+
+    githubUsernameInput.addEventListener('keypress', e => {
         if (e.key === 'Enter') {
             const username = githubUsernameInput.value.trim();
-            if (username) {
-                fetchGitHubRepos(username);
-            }
+            if (username) fetchGitHubRepos(username);
         }
     });
 }
 
-// Initialize the application when DOM is loaded
+// On DOM Load
 document.addEventListener('DOMContentLoaded', initApp);
