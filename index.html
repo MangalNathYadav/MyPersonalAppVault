@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Portfolio 3D | Next-Gen Developer Showcase</title>
+    <title>GitHub Portfolio 3D | Create & Share Your Dev Profile</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css">
@@ -255,6 +255,8 @@
             position: relative;
             overflow: hidden;
             white-space: nowrap;
+            color: var(--text-primary);
+            text-decoration: none;
         }
 
         .logo::after {
@@ -361,13 +363,19 @@
             box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
         }
 
+        /* App Container */
+        .app-container {
+            min-height: 100vh;
+            padding-top: 6rem;
+        }
+
         /* Hero Section - Enhanced */
         .hero {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 100px 2rem 2rem;
+            padding: 2rem;
             position: relative;
             overflow: hidden;
         }
@@ -694,6 +702,144 @@
         .profile-tab.active {
             border-bottom: 2px solid var(--primary);
             color: var(--primary);
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .share-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-1);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .share-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .share-modal.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .share-content {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-3d);
+            position: relative;
+        }
+
+        body.light-theme .share-content {
+            background: var(--bg-primary);
+        }
+
+        .share-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .share-title {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .share-url {
+            display: flex;
+            margin-bottom: 1.5rem;
+        }
+
+        .share-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: var(--bg-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px 0 0 8px;
+            color: var(--text-primary);
+        }
+
+        body.light-theme .share-input {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .copy-btn {
+            padding: 0 1rem;
+            background: var(--gradient-1);
+            border: none;
+            border-radius: 0 8px 8px 0;
+            color: white;
+            cursor: pointer;
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .social-share {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .social-share:hover {
+            transform: translateY(-3px);
+        }
+
+        .share-twitter {
+            background: #1DA1F2;
+        }
+
+        .share-linkedin {
+            background: #0077B5;
+        }
+
+        .share-facebook {
+            background: #4267B2;
         }
 
         .markdown-body {
@@ -1252,6 +1398,10 @@
             text-align: center;
             padding: 4rem;
             grid-column: 1/-1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .spinner {
@@ -1539,6 +1689,10 @@
             .logo span {
                 display: none;
             }
+
+            .profile-actions {
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -1564,10 +1718,10 @@
     <!-- Island Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <div class="logo">
-                <!-- <i class="fab fa-github"></i> -->
-                <span>Portfolio3D</span>
-            </div>
+            <a href="#" class="logo">
+                <i class="fab fa-github"></i>
+                <span>GitHubFolio</span>
+            </a>
             
             <div class="nav-links">
                 <a href="#" class="nav-link">Home</a>
@@ -1582,175 +1736,211 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">GitHub Portfolio</h1>
-            <p class="hero-subtitle">Experience your code in 3D</p>
-            
-            <div class="floating-cards">
-                <div class="card-3d">
-                    <div class="card-icon"><i class="fas fa-code"></i></div>
-                    <h3 class="card-title">Code</h3>
-                    <p class="card-description">Explore beautiful repositories with stunning 3D visuals</p>
-                </div>
-                <div class="card-3d">
-                    <div class="card-icon"><i class="fas fa-project-diagram"></i></div>
-                    <h3 class="card-title">Projects</h3>
-                    <p class="card-description">Discover amazing projects with interactive 3D cards</p>
-                </div>
-                <div class="card-3d">
-                    <div class="card-icon"><i class="fas fa-rocket"></i></div>
-                    <h3 class="card-title">Launch</h3>
-                    <p class="card-description">Showcase your work with a stunning 3D portfolio</p>
+    <!-- App Container -->
+    <div class="app-container">
+        <!-- Hero Section -->
+        <section class="hero" id="heroSection">
+            <div class="hero-content">
+                <h1 class="hero-title">GitHub Portfolio</h1>
+                <p class="hero-subtitle">Create & Share Your Developer Portfolio</p>
+                
+                <div class="floating-cards">
+                    <div class="card-3d">
+                        <div class="card-icon"><i class="fas fa-code"></i></div>
+                        <h3 class="card-title">Code</h3>
+                        <p class="card-description">Showcase your GitHub repositories with stunning 3D visuals</p>
+                    </div>
+                    <div class="card-3d">
+                        <div class="card-icon"><i class="fas fa-share-alt"></i></div>
+                        <h3 class="card-title">Share</h3>
+                        <p class="card-description">Generate a unique URL to share your portfolio with the world</p>
+                    </div>
+                    <div class="card-3d">
+                        <div class="card-icon"><i class="fas fa-rocket"></i></div>
+                        <h3 class="card-title">Launch</h3>
+                        <p class="card-description">Boost your developer career with an impressive portfolio</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Input Section -->
-    <section class="input-section">
-        <div class="glass-panel">
-            <h2 class="section-title">
-                <i class="fab fa-github"></i> Connect Your GitHub
-            </h2>
-            
-            <div class="input-group">
+        <!-- Input Section -->
+        <section class="input-section" id="inputSection">
+            <div class="glass-panel">
+                <h2 class="section-title">
+                    <i class="fab fa-github"></i> Create Your Portfolio
+                </h2>
+                
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        id="githubUsername" 
+                        class="input-3d" 
+                        placeholder="Enter your GitHub username"
+                    >
+                    <button class="btn-3d" id="loadBtn">
+                        Generate Portfolio
+                    </button>
+                </div>
+
+                <!-- Quick Links -->
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem;">
+                    <p style="color: var(--text-secondary); width: 100%; text-align: center;">Try these examples:</p>
+                    <button class="pill" onclick="loadUser('torvalds')">Linus Torvalds</button>
+                    <button class="pill" onclick="loadUser('gaearon')">Dan Abramov</button>
+                    <button class="pill" onclick="loadUser('yyx990803')">Evan You</button>
+                    <button class="pill" onclick="loadUser('addyosmani')">Addy Osmani</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section class="profile-section" id="profileSection">
+            <div class="profile-container">
+                <div class="profile-sidebar">
+                    <img id="profileImage" class="profile-image" src="" alt="Profile Image">
+                    <div>
+                        <h2 id="profileName" class="profile-name"></h2>
+                        <span id="profileUsername" class="profile-username"></span>
+                        <p id="profileBio" class="profile-bio"></p>
+                    </div>
+                    
+                    <div class="profile-details">
+                        <div class="profile-detail" id="profileLocation">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span></span>
+                        </div>
+                        <div class="profile-detail" id="profileWebsite">
+                            <i class="fas fa-link"></i>
+                            <a id="profileWebsiteLink" href="#" target="_blank"></a>
+                        </div>
+                        <div class="profile-detail" id="profileTwitter">
+                            <i class="fab fa-twitter"></i>
+                            <a id="profileTwitterLink" href="#" target="_blank"></a>
+                        </div>
+                        <div class="profile-detail">
+                            <i class="fas fa-calendar-alt"></i>
+                            Joined <span id="profileJoinDate"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-stats">
+                        <div class="profile-stat">
+                            <div class="stat-count" id="profileReposCount">0</div>
+                            <div class="stat-label">Repositories</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="stat-count" id="profileFollowers">0</div>
+                            <div class="stat-label">Followers</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="stat-count" id="profileFollowing">0</div>
+                            <div class="stat-label">Following</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-content">
+                    <div class="profile-actions">
+                        <button class="share-btn" id="shareProfileBtn">
+                            <i class="fas fa-share-alt"></i> Share Portfolio
+                        </button>
+                    </div>
+                    
+                    <div class="profile-tabs">
+                        <div class="profile-tab active" data-tab="readme">README</div>
+                        <div class="profile-tab" data-tab="repositories">Repositories</div>
+                    </div>
+                    
+                    <div id="readmeContent" class="markdown-body"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <div class="stats-container" id="statsContainer">
+            <div class="stat-card">
+                <div class="stat-number" id="totalRepos">0</div>
+                <div class="stat-label">Repositories</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalStars">0</div>
+                <div class="stat-label">Total Stars</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalForks">0</div>
+                <div class="stat-label">Total Forks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalLanguages">0</div>
+                <div class="stat-label">Languages</div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls" id="controlsSection">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
                 <input 
                     type="text" 
-                    id="githubUsername" 
-                    class="input-3d" 
-                    placeholder="Enter GitHub username"
-                    value="torvalds"
+                    id="searchInput" 
+                    class="search-input" 
+                    placeholder="Search projects..."
                 >
-                <button class="btn-3d" id="loadBtn">
-                    Load Portfolio
-                </button>
-            </div>
-
-            <!-- Quick Links -->
-            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                <button class="pill" onclick="loadUser('torvalds')">Linus Torvalds</button>
-                <button class="pill" onclick="loadUser('gaearon')">Dan Abramov</button>
-                <button class="pill" onclick="loadUser('yyx990803')">Evan You</button>
-                <button class="pill" onclick="loadUser('addyosmani')">Addy Osmani</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Profile Section -->
-    <section class="profile-section" id="profileSection">
-        <div class="profile-container">
-            <div class="profile-sidebar">
-                <img id="profileImage" class="profile-image" src="" alt="Profile Image">
-                <div>
-                    <h2 id="profileName" class="profile-name"></h2>
-                    <span id="profileUsername" class="profile-username"></span>
-                    <p id="profileBio" class="profile-bio"></p>
-                </div>
-                
-                <div class="profile-details">
-                    <div class="profile-detail" id="profileLocation">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span></span>
-                    </div>
-                    <div class="profile-detail" id="profileWebsite">
-                        <i class="fas fa-link"></i>
-                        <a id="profileWebsiteLink" href="#" target="_blank"></a>
-                    </div>
-                    <div class="profile-detail" id="profileTwitter">
-                        <i class="fab fa-twitter"></i>
-                        <a id="profileTwitterLink" href="#" target="_blank"></a>
-                    </div>
-                    <div class="profile-detail">
-                        <i class="fas fa-calendar-alt"></i>
-                        Joined <span id="profileJoinDate"></span>
-                    </div>
-                </div>
-                
-                <div class="profile-stats">
-                    <div class="profile-stat">
-                        <div class="stat-count" id="profileReposCount">0</div>
-                        <div class="stat-label">Repositories</div>
-                    </div>
-                    <div class="profile-stat">
-                        <div class="stat-count" id="profileFollowers">0</div>
-                        <div class="stat-label">Followers</div>
-                    </div>
-                    <div class="profile-stat">
-                        <div class="stat-count" id="profileFollowing">0</div>
-                        <div class="stat-label">Following</div>
-                    </div>
-                </div>
             </div>
             
-            <div class="profile-content">
-                <div class="profile-tabs">
-                    <div class="profile-tab active" data-tab="readme">README</div>
-                    <div class="profile-tab" data-tab="repositories">Repositories</div>
-                </div>
-                
-                <div id="readmeContent" class="markdown-body"></div>
+            <div class="filter-pills" id="filterPills">
+                <button class="pill active" data-filter="all">All</button>
+                <button class="pill" data-filter="javascript">JavaScript</button>
+                <button class="pill" data-filter="python">Python</button>
+                <button class="pill" data-filter="java">Java</button>
+                <button class="pill" data-filter="typescript">TypeScript</button>
+                <button class="pill" data-filter="go">Go</button>
+                <button class="pill" data-filter="rust">Rust</button>
+            </div>
+
+            <select id="sortSelect" class="input-3d" style="width: 200px;">
+                <option value="stars">Most Stars</option>
+                <option value="forks">Most Forks</option>
+                <option value="updated">Recently Updated</option>
+                <option value="created">Recently Created</option>
+                <option value="name">Name (A-Z)</option>
+            </select>
+        </div>
+
+        <!-- Projects Grid -->
+        <div class="projects-grid" id="projectsGrid">
+            <div class="loading-container">
+                <div class="spinner"></div>
+                <p>Enter a GitHub username to generate a portfolio</p>
             </div>
         </div>
-    </section>
-
-    <!-- Stats -->
-    <div class="stats-container" id="statsContainer">
-        <div class="stat-card">
-            <div class="stat-number" id="totalRepos">0</div>
-            <div class="stat-label">Repositories</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="totalStars">0</div>
-            <div class="stat-label">Total Stars</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="totalForks">0</div>
-            <div class="stat-label">Total Forks</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="totalLanguages">0</div>
-            <div class="stat-label">Languages</div>
-        </div>
     </div>
 
-    <!-- Controls -->
-    <div class="controls" id="controlsSection">
-        <div class="search-box">
-            <i class="fas fa-search search-icon"></i>
-            <input 
-                type="text" 
-                id="searchInput" 
-                class="search-input" 
-                placeholder="Search projects..."
-            >
-        </div>
-        
-        <div class="filter-pills" id="filterPills">
-            <button class="pill active" data-filter="all">All</button>
-            <button class="pill" data-filter="javascript">JavaScript</button>
-            <button class="pill" data-filter="python">Python</button>
-            <button class="pill" data-filter="java">Java</button>
-            <button class="pill" data-filter="typescript">TypeScript</button>
-            <button class="pill" data-filter="go">Go</button>
-            <button class="pill" data-filter="rust">Rust</button>
-        </div>
-
-        <select id="sortSelect" class="input-3d" style="width: 200px;">
-            <option value="stars">Most Stars</option>
-            <option value="forks">Most Forks</option>
-            <option value="updated">Recently Updated</option>
-            <option value="created">Recently Created</option>
-            <option value="name">Name (A-Z)</option>
-        </select>
-    </div>
-
-    <!-- Projects Grid -->
-    <div class="projects-grid" id="projectsGrid">
-        <div class="loading-container">
-            <div class="spinner"></div>
-            <p>Ready to load repositories...</p>
+    <!-- Share Modal -->
+    <div class="share-modal" id="shareModal">
+        <div class="share-content">
+            <button class="share-close" id="closeShareModal">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="share-title">Share Your Portfolio</h2>
+            <div class="share-url">
+                <input type="text" id="shareUrl" class="share-input" readonly>
+                <button class="copy-btn" id="copyUrlBtn">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+            <div class="share-buttons">
+                <a href="#" id="twitterShare" class="social-share share-twitter" target="_blank">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" id="linkedinShare" class="social-share share-linkedin" target="_blank">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="#" id="facebookShare" class="social-share share-facebook" target="_blank">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+            </div>
         </div>
     </div>
 
@@ -1767,31 +1957,22 @@
         <p class="footer-text">
             Made with <i class="fas fa-heart heart"></i> using JavaScript
         </p>
-        <div style="margin-top:2rem;">
-            <strong>Developer:</strong> Mangal Nath Yadav
-            <br>
-            <a href="https://github.com/MangalNathYadav" target="_blank" style="margin-right:1.5rem;">
-                <i class="fab fa-github"></i> GitHub
-            </a>
-            <a href="https://instagram.com/optimistic__thunder" target="_blank">
-                <i class="fab fa-instagram"></i> Instagram
-            </a>
-        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
         // ============================================
-        // ULTRA MODERN 3D PORTFOLIO APP - ENHANCED
+        // GITHUB PORTFOLIO APP WITH SHAREABLE URLS
         // ============================================
         
-        class GitHubPortfolio3D {
+        class GitHubPortfolioApp {
             constructor() {
                 this.repos = [];
                 this.filteredRepos = [];
                 this.currentFilter = 'all';
                 this.lastScrollY = 0;
                 this.userData = null;
+                this.currentUsername = '';
                 this.init();
             }
 
@@ -1801,6 +1982,7 @@
                 this.createParticles();
                 this.hidePreloader();
                 this.initializeTheme();
+                this.checkUrlForUsername();
             }
 
             setupElements() {
@@ -1838,7 +2020,17 @@
                     profileReposCount: document.getElementById('profileReposCount'),
                     profileFollowers: document.getElementById('profileFollowers'),
                     profileFollowing: document.getElementById('profileFollowing'),
-                    readmeContent: document.getElementById('readmeContent')
+                    readmeContent: document.getElementById('readmeContent'),
+                    shareProfileBtn: document.getElementById('shareProfileBtn'),
+                    shareModal: document.getElementById('shareModal'),
+                    closeShareModal: document.getElementById('closeShareModal'),
+                    shareUrl: document.getElementById('shareUrl'),
+                    copyUrlBtn: document.getElementById('copyUrlBtn'),
+                    twitterShare: document.getElementById('twitterShare'),
+                    linkedinShare: document.getElementById('linkedinShare'),
+                    facebookShare: document.getElementById('facebookShare'),
+                    heroSection: document.getElementById('heroSection'),
+                    inputSection: document.getElementById('inputSection')
                 };
             }
 
@@ -1881,6 +2073,22 @@
                     });
                 });
 
+                // Share profile
+                this.elements.shareProfileBtn.addEventListener('click', () => this.showShareModal());
+                
+                // Close share modal
+                this.elements.closeShareModal.addEventListener('click', () => this.hideShareModal());
+                
+                // Copy URL
+                this.elements.copyUrlBtn.addEventListener('click', () => this.copyUrlToClipboard());
+                
+                // Close modal when clicking outside
+                this.elements.shareModal.addEventListener('click', (e) => {
+                    if (e.target === this.elements.shareModal) {
+                        this.hideShareModal();
+                    }
+                });
+
                 // Show/hide scroll button and navbar on scroll
                 window.addEventListener('scroll', () => {
                     if (window.scrollY > 300) {
@@ -1897,6 +2105,21 @@
                     }
                     this.lastScrollY = window.scrollY;
                 });
+            }
+
+            checkUrlForUsername() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const username = urlParams.get('user');
+                
+                if (username) {
+                    this.elements.githubUsername.value = username;
+                    this.loadRepos();
+                    
+                    // Scroll to profile section
+                    setTimeout(() => {
+                        this.elements.profileSection.scrollIntoView({ behavior: 'smooth' });
+                    }, 1000);
+                }
             }
 
             createParticles() {
@@ -1957,6 +2180,7 @@
                     return;
                 }
 
+                this.currentUsername = username;
                 this.showLoading();
 
                 try {
@@ -2000,11 +2224,19 @@
                     // Load README
                     await this.loadReadme(username);
 
+                    // Update URL with username parameter
+                    this.updateBrowserUrl(username);
+
                 } catch (error) {
                     console.error('Error:', error);
                     this.showToast('Failed to load data. Loading sample data...');
                     this.loadSampleData();
                 }
+            }
+
+            updateBrowserUrl(username) {
+                const newUrl = `${window.location.origin}${window.location.pathname}?user=${username}`;
+                window.history.pushState({ path: newUrl }, '', newUrl);
             }
 
             async loadReadme(username) {
@@ -2085,6 +2317,36 @@
                 this.elements.profileReposCount.textContent = this.userData.public_repos;
                 this.elements.profileFollowers.textContent = this.userData.followers;
                 this.elements.profileFollowing.textContent = this.userData.following;
+            }
+
+            showShareModal() {
+                if (!this.currentUsername) {
+                    this.showToast('Please generate a portfolio first');
+                    return;
+                }
+                
+                const portfolioUrl = `${window.location.origin}${window.location.pathname}?user=${this.currentUsername}`;
+                this.elements.shareUrl.value = portfolioUrl;
+                
+                // Set social share links
+                const encodedUrl = encodeURIComponent(portfolioUrl);
+                const title = encodeURIComponent(`Check out my GitHub portfolio: ${this.userData.name || this.userData.login}`);
+                
+                this.elements.twitterShare.href = `https://twitter.com/intent/tweet?text=${title}&url=${encodedUrl}`;
+                this.elements.linkedinShare.href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
+                this.elements.facebookShare.href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+                
+                this.elements.shareModal.classList.add('visible');
+            }
+
+            hideShareModal() {
+                this.elements.shareModal.classList.remove('visible');
+            }
+
+            copyUrlToClipboard() {
+                this.elements.shareUrl.select();
+                document.execCommand('copy');
+                this.showToast('URL copied to clipboard!');
             }
 
             loadSampleData() {
@@ -2354,7 +2616,7 @@ I'm a sample user demonstrating the GitHub Portfolio 3D application.
         }
 
         // Initialize app
-        const portfolio = new GitHubPortfolio3D();
+        const portfolio = new GitHubPortfolioApp();
     </script>
 </body>
 </html>
