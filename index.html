@@ -1769,7 +1769,7 @@
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="#" class="logo" id="homeLink">
-                <i class="fab fa-github"></i>
+                <!-- <i class="fab fa-github"></i> -->
                 <span>GitHubFolio</span>
             </a>
             
@@ -1778,6 +1778,7 @@
                 <a href="#profileSection" class="nav-link">Profile</a>
                 <a href="#projectsGrid" class="nav-link">Projects</a>
                 <a href="#" class="nav-link">About</a>
+                <a href="#" class="nav-link" id="createOwnBtn" style="padding: 0.5rem 1rem; margin-left: 1rem; background: var(--gradient-1); color: white; border-radius: 50px;">Create Own</a>
             </div>
             
             <button class="theme-toggle" id="themeToggle">
@@ -2008,7 +2009,11 @@
     <!-- Footer -->
     <footer class="footer">
         <p class="footer-text">
-            Made with <i class="fas fa-heart heart"></i> using JavaScript
+                Made with <i class="fas fa-heart heart"></i> using JavaScript<br>
+                <strong>Developer Contact:</strong><br>
+                Name: Mangal Nath Yadav<br>
+                Instagram: <a href="https://instagram.com/optimistic__thunder" target="_blank" style="color:var(--primary);">@optimistic__thunder</a><br>
+                GitHub: <a href="https://github.com/MangalNathYadav" target="_blank" style="color:var(--primary);">MangalNathYadav</a>
         </p>
     </footer>
 
@@ -2086,7 +2091,8 @@
                     inputSection: document.getElementById('inputSection'),
                     backToCreateBtn: document.getElementById('backToCreateBtn'),
                     homeLink: document.getElementById('homeLink'),
-                    homeNavLink: document.getElementById('homeNavLink')
+                    homeNavLink: document.getElementById('homeNavLink'),
+                    createOwnBtn: document.getElementById('createOwnBtn')
                 };
             }
 
@@ -2162,6 +2168,12 @@
                     this.showCreateSections();
                 });
 
+                // Create Own button
+                this.elements.createOwnBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showInputSection();
+                });
+
                 // Show/hide scroll button and navbar on scroll
                 window.addEventListener('scroll', () => {
                     if (window.scrollY > 300) {
@@ -2200,6 +2212,12 @@
                 this.elements.inputSection.classList.add('hidden');
             }
 
+            showInputSection() {
+                this.elements.heroSection.classList.add('hidden');
+                this.elements.inputSection.classList.remove('hidden');
+                this.elements.profileSection.classList.remove('visible');
+            }
+            
             showCreateSections() {
                 this.elements.heroSection.classList.remove('hidden');
                 this.elements.inputSection.classList.remove('hidden');
